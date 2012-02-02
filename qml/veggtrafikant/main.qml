@@ -74,8 +74,9 @@ Rectangle {
             Text {
                 id: weatherText
 
-                font.pixelSize: parent.height * 0.8
+                font.pixelSize: parent.height * 0.7
                 anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
 
                 text: "Weather"
                 color: "white"
@@ -85,6 +86,7 @@ Rectangle {
                 source: "qrc:images/yr/1.png"
 
                 anchors.right: weatherText.left
+                anchors.rightMargin: root.height * 0.03
                 height: parent.height
                 width: parent.height
                 fillMode: Image.PreserveAspectFit
@@ -114,7 +116,7 @@ Rectangle {
             model: realtimeModel
             delegate: ListDelegate {
                 titleSize: root.height * 0.08
-                subtitleSize: root.height * 0.06
+                subtitleSize: root.height * 0.07
                 onClicked:  {}
             }
 

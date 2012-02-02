@@ -58,16 +58,6 @@ Item {
     height: titleSize + titleSize * 0.2
     width: parent.width
 
-    //    BorderImage {
-    //        id: background
-    //        anchors.fill: parent
-    //        // Fill page porders
-    //        anchors.leftMargin: -UI.MARGIN_XLARGE
-    //        anchors.rightMargin: -UI.MARGIN_XLARGE
-    //        visible: mouseArea.pressed
-    //        source: "image://theme/meegotouch-list-background-pressed-center"
-    //    }
-
     Text {
         id: mainText
         text: model.title
