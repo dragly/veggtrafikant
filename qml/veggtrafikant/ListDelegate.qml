@@ -55,52 +55,38 @@ Item {
     property int subtitleWeight: Font.Light
     property color subtitleColor: UI.LIST_SUBTITLE_COLOR_INVERTED
 
-    height: UI.LIST_ITEM_HEIGHT
+    height: titleSize + titleSize * 0.2
     width: parent.width
 
-//    BorderImage {
-//        id: background
-//        anchors.fill: parent
-//        // Fill page porders
-//        anchors.leftMargin: -UI.MARGIN_XLARGE
-//        anchors.rightMargin: -UI.MARGIN_XLARGE
-//        visible: mouseArea.pressed
-//        source: "image://theme/meegotouch-list-background-pressed-center"
-//    }
+    //    BorderImage {
+    //        id: background
+    //        anchors.fill: parent
+    //        // Fill page porders
+    //        anchors.leftMargin: -UI.MARGIN_XLARGE
+    //        anchors.rightMargin: -UI.MARGIN_XLARGE
+    //        visible: mouseArea.pressed
+    //        source: "image://theme/meegotouch-list-background-pressed-center"
+    //    }
 
-    Row {
-        anchors.fill: parent
-        spacing: UI.LIST_ITEM_SPACING
+    Text {
+        id: mainText
+        text: model.title
+        font.weight: listItem.titleWeight
+        font.pixelSize: listItem.titleSize
+        height: listItem.titleSize * 1.1
+        color: (model.platform > 1) ? listItem.titleColor : "yellow"
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+    }
 
-        Image {
-            anchors.verticalCenter: parent.verticalCenter
-            visible: model.iconSource ? true : false
-            width: UI.LIST_ICON_SIZE
-            height: UI.LIST_ICON_SIZE
-            source: model.iconSource ? model.iconSource : ""
-        }
-
-        Column {
-            anchors.verticalCenter: parent.verticalCenter
-
-            Text {
-                id: mainText
-                text: model.title
-                font.weight: listItem.titleWeight
-                font.pixelSize: listItem.titleSize
-                color: listItem.titleColor
-            }
-
-            Text {
-                id: subText
-                text: model.subtitle
-                font.weight: listItem.subtitleWeight
-                font.pixelSize: listItem.subtitleSize
-                color: listItem.subtitleColor
-
-                visible: text != ""
-            }
-        }
+    Text {
+        id: timeText
+        text: model.timeLeft
+        font.weight: Font.Bold
+        font.pixelSize: listItem.subtitleSize
+        color: (model.platform > 1) ? listItem.titleColor : "yellow"
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
     }
     MouseArea {
         id: mouseArea;

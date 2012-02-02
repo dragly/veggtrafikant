@@ -113,7 +113,7 @@ symbian {
             QMAKE_EXTRA_TARGETS += first copydeploymentfolders
         }
     }
-    installPrefix = /opt/$${TARGET}
+    installPrefix = /home/$$system(whoami)/$${TARGET}
     for(deploymentfolder, DEPLOYMENTFOLDERS) {
         item = item$${deploymentfolder}
         itemfiles = $${item}.files
