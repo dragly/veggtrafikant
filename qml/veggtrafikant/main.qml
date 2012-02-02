@@ -9,6 +9,9 @@ Rectangle {
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
     property string stationId: "3010420"
+    property int newsId: 0
+    property int nDepartures: 8
+
     width: 360
     height: 360
     color: "black"
@@ -46,6 +49,77 @@ Rectangle {
         }
     }
 
+    Timer {
+        id: refreshNews
+        triggeredOnStart: true
+        repeat: true
+        running: true
+        interval: 10 * 60 * 1000
+        onTriggered: {
+            newsModel.reload()
+        }
+    }
+
+    Timer {
+        id: switchNews
+        triggeredOnStart: true
+        repeat: true
+        interval: 10 * 1000
+        onTriggered: {
+            if(newsText.anchors.bottomMargin == 0) {
+                newsAnimation.start()
+                interval = 1000
+            } else {
+                if(newsModel.count > 0) {
+                    newsId++
+                    if(newsId >= newsModel.count) {
+                        newsId = 0
+                    }
+                    newsText.text = newsModel.get(newsId).title + ": " + newsModel.get(newsId).description
+                }
+                newsAnimationBack.start()
+                interval = 10 * 1000
+            }
+        }
+    }
+
+    PropertyAnimation {
+        id: newsAnimation
+        target: newsText
+        property: "anchors.bottomMargin"
+        to: -2 * newsText.height
+        easing.type: Easing.InBack
+        duration: 500
+    }
+    PropertyAnimation {
+        id: newsAnimationBack
+        target: newsText
+        property: "anchors.bottomMargin"
+        to: 0
+        easing.type: Easing.OutBack
+        duration: 500
+    }
+
+    //    Timer {
+    //        id: rollNews
+    //        triggeredOnStart: true
+    //        repeat: true
+    //        running: false
+    //        interval: 60 * 1000
+    //        onTriggered: {
+    //            newsText.anchors.leftMargin = root.width
+    //            newsAnimation.start()
+    //        }
+    //    }
+
+    //    PropertyAnimation {
+    //        id: newsAnimation
+    //        target: newsText
+    //        property: "anchors.leftMargin"
+    //        to: -root.width * 10
+    //        duration: rollNews.interval * 0.8
+    //    }
+
     ListModel {
         id: realtimeModel
 
@@ -61,7 +135,7 @@ Rectangle {
             id: weatherRow
             anchors.top: parent.top
             width: parent.width
-            height: root.height * 0.15
+            height: root.height * 0.12
             Text {
                 id: clockText
 
@@ -96,16 +170,14 @@ Rectangle {
             id: listview
 
             anchors {
-                bottom: parent.bottom
+                bottom: newsText.top
                 top: weatherRow.bottom
                 right: parent.right
                 left: parent.left
                 rightMargin: parent.height * 0.05
                 leftMargin: parent.height * 0.05
-                topMargin: parent.height * 0.02
+                topMargin: parent.height * 0.01
             }
-            interactive: true
-            clip: true
 
             header: Column {
                 id: col
@@ -117,14 +189,41 @@ Rectangle {
             delegate: ListDelegate {
                 titleSize: root.height * 0.08
                 subtitleSize: root.height * 0.07
-                onClicked:  {}
             }
 
-            MouseArea {
-                anchors.fill: parent
-                onClicked: refresh()
+        }
+        Text {
+            id: newsText
+            text: "Updating news..."
+            color: "white"
+            height: root.height * 0.09
+            font.pixelSize: root.height * 0.038
+            anchors {
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
+                leftMargin: root.height * 0.01
+                rightMargin: root.height * 0.01
             }
+            wrapMode: Text.WordWrap
+            verticalAlignment: Text.AlignTop
+            clip: true
+        }
+    }
 
+    XmlListModel {
+        id: newsModel
+        source: "http://www.nrk.no/nyheiter/siste.rss"
+        query: "/rss/channel/item"
+
+        XmlRole { name: "title"; query: "title/string()" }
+        XmlRole { name: "description"; query: "description/string()" }
+        onStatusChanged: {
+            if(status == XmlListModel.Error) {
+                console.log("News error: " + weatherModel.errorString)
+            } else if(status == XmlListModel.Ready) {
+                switchNews.start()
+            }
         }
     }
 
@@ -137,16 +236,13 @@ Rectangle {
         XmlRole { name: "symbolName"; query: "symbol/@name/string()" }
         XmlRole { name: "temperature"; query: "temperature/@value/string()" }
         onStatusChanged: {
-            console.log("Status is: " + weatherModel.status)
             if(status == XmlListModel.Error) {
-                console.log("Error: " + weatherModel.errorString)
+                console.log("Yr.no error: " + weatherModel.errorString)
             }
             if(status == XmlListModel.Ready) {
-                console.log("First role: " + weatherModel.get(0).symbolName)
                 weatherText.text = weatherModel.get(0).temperature + "°C"
                 weatherImage.source = "qrc:images/yr/" + weatherModel.get(0).symbolNumber + ".png"
             }
-            console.log("Count is: " + weatherModel.count)
         }
     }
 
@@ -160,7 +256,7 @@ Rectangle {
                         realtimeModel.clear()
                         var a = JSON.parse(xhr.responseText);
                         for (var b in a) {
-                            if(counter < 8) {
+                            if(counter < nDepartures) {
                                 var o = a[b]
                                 var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
                                 var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)

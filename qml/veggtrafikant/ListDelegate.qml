@@ -64,7 +64,7 @@ Item {
         font.weight: listItem.titleWeight
         font.pixelSize: listItem.titleSize
         height: listItem.titleSize * 1.1
-        color: (model.platform > 1) ? listItem.titleColor : "yellow"
+        color: (model.platform <= 1) ? listItem.titleColor : "yellow"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -74,7 +74,7 @@ Item {
         text: model.timeLeft
         font.weight: Font.Bold
         font.pixelSize: listItem.subtitleSize
-        color: (model.platform > 1) ? listItem.titleColor : "yellow"
+        color: (model.platform <= 1) ? listItem.titleColor : "yellow"
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
     }

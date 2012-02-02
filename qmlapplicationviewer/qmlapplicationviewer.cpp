@@ -16,6 +16,7 @@
 #include <QtDeclarative/QDeclarativeComponent>
 #include <QtDeclarative/QDeclarativeEngine>
 #include <QtDeclarative/QDeclarativeContext>
+#include <QtOpenGL/QGLWidget>
 
 #include <qplatformdefs.h> // MEEGO_EDITION_HARMATTAN
 
@@ -78,6 +79,7 @@ QmlApplicationViewer::QmlApplicationViewer(QWidget *parent)
 {
     connect(engine(), SIGNAL(quit()), SLOT(close()));
     setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    setViewport(new QGLWidget());
     // Qt versions prior to 4.8.0 don't have QML/JS debugging services built in
 #if defined(QMLJSDEBUGGER) && QT_VERSION < 0x040800
 #if !defined(NO_JSDEBUGGER)
