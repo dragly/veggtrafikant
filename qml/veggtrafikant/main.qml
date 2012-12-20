@@ -8,7 +8,10 @@ Rectangle {
 
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
-    property string stationId: "123456"
+    property variant stations: [
+        {stationId: "3011610", directions: ["2"], maxTime: 8},
+        {stationId: "3011612", directions: ["2"], maxTime: 4}
+    ]
     property int newsId: 0
     property int nDepartures: 8
 
@@ -246,24 +249,42 @@ Rectangle {
         }
     }
 
+    property int stationIdCounter: 0;
+    property bool isRealtimeModelCleared: false;
     function refresh() {
-        var counter = 0
-        var xhr = new XMLHttpRequest;
-        xhr.open("GET", "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId);
-        console.log("http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId)
-        xhr.onreadystatechange = function() {
-                    if (xhr.readyState == XMLHttpRequest.DONE) {
-                        realtimeModel.clear()
-                        var a = JSON.parse(xhr.responseText);
-                        for (var b in a) {
-                            if(counter < nDepartures) {
-                                var o = a[b]
+        var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
+        if(stationIdCounter < stations.length) {
+            var stationId = stations[stationIdCounter].stationId
+            var directions = stations[stationIdCounter].directions
+            var maxTime = stations[stationIdCounter].maxTime
+            console.log(stationIdCounter)
+            console.log(stationId)
+            var xhr = new XMLHttpRequest;
+            xhr.open("GET", "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId);
+            console.log("http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId)
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if(stationIdCounter == 0) {
+                        realtimeModel.clear();
+                    }
+
+                    var a = JSON.parse(xhr.responseText);
+                    if(!isRealtimeModelCleared) {
+                        realtimeModel.clear();
+                        isRealtimeModelCleared = 1;
+                    }
+
+                    for (var b in a) {
+//                        if(counter < nDepartures) {
+                            var o = a[b]
                                 var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
                                 var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)
                                 var currentTime = Helper.parseDate(o.RecordedAtTime)
                                 var timeDifference = arrivalTime.getTime() - currentTime.getTime()
                                 var timeDifferenceMinutes = timeDifference / 60000
+                                if(directions.indexOf(o.DirectionName) !== -1 && timeDifferenceMinutes > maxTime) {
                                 realtimeModel.append({
+                                                         lineNumber: o.PublishedLineName,
                                                          title: o.PublishedLineName + " " + o.DestinationName,
                                                          arrivalTime: arrivalTime,
                                                          timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
@@ -271,24 +292,34 @@ Rectangle {
                                                          platform: o.DirectionRef,
                                                          selected: false
                                                      });
-                                console.log(o.PublishedLineName + " " + o.DestinationName + " " + timeDifferenceMinutes.toFixed(0) + " min")
+                                console.log("Added")
                             }
-                            counter++
-                        }
-                        var swapped = true; // let's perform a bubble sort! :D
-                        while(swapped) {
-                            swapped = false;
-                            for(var i = 0; i < realtimeModel.count - 1; i++) {
-                                if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
-                                    realtimeModel.move(i,i+1,1);
-                                    swapped = true;
-                                }
-                            }
-                        }
-                        realtimeModel.loadCompleted()
+                            console.log(o.PublishedLineName + " " + o.DestinationName + " " + timeDifferenceMinutes.toFixed(0) + " min")
+//                        }
+//                        counter++
                     }
+                    var swapped = true; // let's perform a bubble sort! :D
+                    while(swapped) {
+                        swapped = false;
+                        for(var i = 0; i < realtimeModel.count - 1; i++) {
+                            if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
+                                realtimeModel.move(i,i+1,1);
+                                swapped = true;
+                            }
+                        }
+                    }
+                    stationIdCounter++;
+                    refresh();
                 }
-        xhr.send();
-        counter = 0
+            }
+            xhr.send();
+        } else {
+            stationIdCounter = 0;
+
+            while(realtimeModel.count > nDepartures) {
+                realtimeModel.remove(realtimeModel.count - 1);
+            }
+            realtimeModel.loadCompleted()
+        }
     }
 }
