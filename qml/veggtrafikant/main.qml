@@ -13,7 +13,7 @@ Rectangle {
         {stationId: "3011612", directions: ["2"], maxTime: 4}
     ]
     property int newsId: 0
-    property int nDepartures: 8
+    property int nDepartures: 7
 
     width: 360
     height: 360
@@ -199,7 +199,7 @@ Rectangle {
             id: newsText
             text: "Updating news..."
             color: "white"
-            height: root.height * 0.09
+            height: root.height * 0.15
             font.pixelSize: root.height * 0.038
             anchors {
                 bottom: parent.bottom
