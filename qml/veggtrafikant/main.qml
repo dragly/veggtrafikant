@@ -1,5 +1,6 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
-import QtQuick 1.1
+import QtQuick 2.0
+import QtQuick.XmlListModel 2.0
 import "constants.js" as UI
 import "helpers.js" as Helper
 
@@ -9,8 +10,7 @@ Rectangle {
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
     property variant stations: [
-        {stationId: "3011610", directions: ["2"], maxTime: 8},
-        {stationId: "3011612", directions: ["2"], maxTime: 4}
+        {stationId: "", directions: ["2"], maxTime: 8},
     ]
     property int newsId: 0
     property int nDepartures: 7

@@ -4,11 +4,13 @@ folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
 QT += opengl
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): DEFINES += QT_VERSION_IS_FIVE
 
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-symbian:TARGET.UID3 = 0xE1F54059
+#symbian:TARGET.UID3 = 0xE1F54059
 
 # Smart Installer package's UID
 # This UID is from the protected range and therefore the package will
@@ -18,7 +20,7 @@ symbian:TARGET.UID3 = 0xE1F54059
 #symbian:DEPLOYMENT.installer_header = 0x2002CCCF
 
 # Allow network access on Symbian
-symbian:TARGET.CAPABILITY += NetworkServices
+#symbian:TARGET.CAPABILITY += NetworkServices
 
 # If your application uses the Qt Mobility libraries, uncomment the following
 # lines and add the respective components to the MOBILITY variable.
@@ -35,7 +37,7 @@ symbian:TARGET.CAPABILITY += NetworkServices
 SOURCES += main.cpp
 
 # Please do not modify the following two lines. Required for deployment.
-include(qmlapplicationviewer/qmlapplicationviewer.pri)
+include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
 
 RESOURCES += \
