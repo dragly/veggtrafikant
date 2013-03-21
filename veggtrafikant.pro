@@ -4,6 +4,8 @@ folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
 QT += opengl
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): DEFINES += QT_VERSION_IS_FIVE
 
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
