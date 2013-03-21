@@ -199,7 +199,7 @@ Rectangle {
             id: newsText
             text: "Updating news..."
             color: "white"
-            height: root.height * 0.15
+            height: root.height * 0.18
             font.pixelSize: root.height * 0.038
             anchors {
                 bottom: parent.bottom
