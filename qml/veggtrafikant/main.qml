@@ -10,7 +10,7 @@ Rectangle {
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
     property variant stations: [
-        {stationId: "", directions: ["2"], maxTime: 8},
+        {stationId: "3010360", directions: ["1","2"], maxTime: 8},
     ]
     property int newsId: 0
     property int nDepartures: 7

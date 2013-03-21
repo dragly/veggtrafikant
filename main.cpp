@@ -16,11 +16,15 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     //    QApplication::setGraphicsSystem("opengl");
 
-    QString stationID = "3010011";
-    if(argc > 1) {
-        stationID = argv[1];
-    }
-    qDebug() << stationID;
+//    QVariant stations;
+//    if(argc > 1) {
+//        for(int i = 1; i < argc; i++) {
+//            stations << argv[i];
+//        }
+//    } else {
+//        stations << "3010011";
+//    }
+//    qDebug() << stationID;
 
     QPixmap nullCursor(16, 16);
     nullCursor.fill(Qt::transparent);
@@ -32,7 +36,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 //    viewer.setViewport(glWidget);
 //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
-    viewer.rootObject()->setProperty("stationId", stationID);
+//    viewer.rootObject()->setProperty("stations", stationID);
     viewer.showFullScreen();
     //    viewer.show();
 
