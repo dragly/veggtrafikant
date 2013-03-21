@@ -8,7 +8,7 @@ Rectangle {
 
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
-    property string stationId: "3010420"
+    property string stationId: ""
     property int newsId: 0
     property int nDepartures: 8
 
