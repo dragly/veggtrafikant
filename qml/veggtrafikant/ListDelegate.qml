@@ -48,7 +48,7 @@ Item {
     property alias pressed: mouseArea.pressed
 
     property int titleSize: UI.LIST_TILE_SIZE
-    property int titleWeight: Font.Bold
+    property int titleWeight: Font.Normal
     property color titleColor: UI.LIST_TITLE_COLOR_INVERTED
 
     property int subtitleSize: UI.LIST_SUBTILE_SIZE

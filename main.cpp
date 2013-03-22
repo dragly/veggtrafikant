@@ -8,6 +8,7 @@
 //#include <QDeclarativeContext>
 #include <QGraphicsObject>
 #include <QGLWidget>
+#include <QFontDatabase>
 #include "qtquick2applicationviewer.h"
 //#include "qmlapplicationviewer.h"
 
@@ -26,6 +27,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 //    }
 //    qDebug() << stationID;
 
+    qDebug() << "Starting database";
+    QFontDatabase database;
+    if(!database.addApplicationFont(":/fonts/ubuntu/Ubuntu-R.ttf")) {
+        qWarning() << "Could not load Ubuntu font!";
+    }
+    qDebug() << "font loaded";
+
     QPixmap nullCursor(16, 16);
     nullCursor.fill(Qt::transparent);
     app.setOverrideCursor(QCursor(nullCursor));
@@ -37,9 +45,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
 //    viewer.rootObject()->setProperty("stations", stationID);
-    viewer.showFullScreen();
-    //    viewer.show();
+//    viewer.showFullScreen();
+        viewer.show();
 
-
+    app.setFont(QFont("Ubuntu"));
     return app.exec();
 }

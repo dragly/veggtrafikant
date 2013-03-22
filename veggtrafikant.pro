@@ -42,3 +42,8 @@ qtcAddDeployment()
 
 RESOURCES += \
     resources.qrc
+
+TARGET = veggtrafikant
+
+OTHER_FILES += \
+    qml/veggtrafikant/TravelTimes.qml
