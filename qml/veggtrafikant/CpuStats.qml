@@ -3,6 +3,10 @@ import QtQuick 2.0
 Rectangle {
     id: root
 
+    property string url: "http://compphys.dragly.org/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1"
+    property string title: "CPU usage"
+    property int updateInterval: 60000
+
     width: 100
     height: 62
     color: "transparent"
@@ -22,14 +26,14 @@ Rectangle {
     Timer {
         repeat: true
         running: true
-        interval: 2000
+        interval: updateInterval
         onTriggered: {
             refresh()
         }
     }
 
     Text {
-        text: "CPU usage"
+        text: root.title
         font.pixelSize: parent.height * 0.05
         anchors {
             top: parent.top
@@ -149,9 +153,8 @@ Rectangle {
         //                realtimeModel.clear()
 
         var xhr = new XMLHttpRequest;
-        var url = "http://compphys.dragly.org/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1";
-        console.log(url)
-        xhr.open("GET", url);
+        console.log(root.url)
+        xhr.open("GET", root.url);
         var letters = '0123456789ABCDEF'.split('');
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -164,7 +167,7 @@ Rectangle {
                     for(var c in o) {
                         var o2 = o[c]
                         var color = "#";
-                        var rNum = Math.round(parseFloat(o2.y) / 100 * 15);
+                        var rNum = Math.min(Math.round(parseFloat(o2.y) / 100 * 15), 15)
                         color += letters[rNum];
                         color += "0";
                         color += letters[15 - rNum];
