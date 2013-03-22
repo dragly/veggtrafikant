@@ -17,6 +17,7 @@ Rectangle {
 
     width: 360
     height: 360
+    smooth: true
 //    color: "black"
     gradient: Gradient {
         GradientStop{ position: 0.0; color: "#9ac1d4" }
