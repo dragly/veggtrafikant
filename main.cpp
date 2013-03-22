@@ -39,9 +39,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     app.setOverrideCursor(QCursor(nullCursor));
 
     QtQuick2ApplicationViewer viewer;
-    QGLWidget* glWidget = new QGLWidget();
+    viewer.setSurfaceType(QSurface::OpenGLSurface);
+//    QGLWidget* glWidget = new QGLWidget();
 //    glWidget->setAutoFillBackground(false);
-    viewer.setViewport(glWidget);
+//    viewer.setViewport(glWidget);
 //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
 //    viewer.rootObject()->setProperty("stations", stationID);
