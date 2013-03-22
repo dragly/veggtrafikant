@@ -17,7 +17,19 @@ Rectangle {
 
     width: 360
     height: 360
-    color: "black"
+//    color: "black"
+    gradient: Gradient {
+        GradientStop{ position: 0.0; color: "#9ac1d4" }
+        GradientStop{ position: 0.2; color: "#84b9d1" }
+        GradientStop{
+            position: 0.8;
+            SequentialAnimation on color {
+                loops: Animation.Infinite
+                ColorAnimation { from: "#466fab"; to: "#618cbf"; duration: 10000 }
+                ColorAnimation { from: "#618cbf"; to: "#466fab"; duration: 10000 }
+            }
+        }
+    }
 
     Timer {
         id: refreshRealtime
