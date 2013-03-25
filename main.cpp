@@ -39,7 +39,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     app.setOverrideCursor(QCursor(nullCursor));
 
     QtQuick2ApplicationViewer viewer;
-//    viewer.setSurfaceType(QSurface::OpenGLSurface);
+    viewer.setSurfaceType(QSurface::OpenGLSurface);
 //    QGLWidget* glWidget = new QGLWidget();
 //    glWidget->setAutoFillBackground(false);
 //    viewer.setViewport(glWidget);
@@ -47,7 +47,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
 //    viewer.rootObject()->setProperty("stations", stationID);
 //    viewer.showFullScreen();
-        viewer.show();
+    viewer.showFullScreen();
 
     app.setFont(QFont("Ubuntu"));
     return app.exec();
