@@ -86,7 +86,7 @@ Rectangle {
         }
     ]
 
-    state: "showCpuStats"
+    state: "showTravelTimes"
 
     transitions: [
         Transition {

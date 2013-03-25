@@ -13,7 +13,7 @@ Rectangle {
         {stationId: "3010360", directions: ["1","2"], maxTime: 8},
     ]
     property int newsId: 0
-    property int nDepartures: 7
+    property int nDepartures: 6
 
     smooth: true
     color: "transparent"
@@ -178,7 +178,7 @@ Rectangle {
                 left: parent.left
                 rightMargin: parent.height * 0.05
                 leftMargin: parent.height * 0.05
-                topMargin: parent.height * 0.01
+                topMargin: parent.height * 0.03
             }
 
             header: Column {

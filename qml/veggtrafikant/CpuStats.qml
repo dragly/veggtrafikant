@@ -122,9 +122,9 @@ Rectangle {
             }
             // overlay a radial gradient
             var gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius)
-            gradient.addColorStop(0.0, Qt.rgba(1.0, 1.0, 1.0, 0.3))
+            gradient.addColorStop(0.0, Qt.rgba(1.0, 1.0, 1.0, 0.1))
             gradient.addColorStop(0.5, Qt.rgba(0.5, 0.5, 0.5, 0.0))
-            gradient.addColorStop(1.0, Qt.rgba(0.0, 0.0, 0.0, 0.3))
+            gradient.addColorStop(1.0, Qt.rgba(0.0, 0.0, 0.0, 0.1))
             ctx.beginPath()
             ctx.moveTo(centerX, centerY)
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false)
