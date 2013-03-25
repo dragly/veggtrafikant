@@ -70,7 +70,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: timer
-                interval: 5 * 1000
+                interval: 7 * 1000
             }
         },
         State {
@@ -81,7 +81,7 @@ Rectangle {
             }
             PropertyChanges {
                 target: timer
-                interval: 5 * 1000
+                interval: 7 * 1000
             }
         }
     ]

@@ -251,6 +251,7 @@ Rectangle {
     property int stationIdCounter: 0;
     property bool isRealtimeModelCleared: false;
     function refresh() {
+        console.log("nDepartures: " + nDepartures)
         var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
         if(stationIdCounter < stations.length) {
             var stationId = stations[stationIdCounter].stationId

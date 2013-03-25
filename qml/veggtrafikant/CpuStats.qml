@@ -45,8 +45,8 @@ Rectangle {
 
     ListView {
         id: view
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.verticalCenter: parent.verticalCenter
+        height: cpuModel.count * root.height / 10
         anchors.left: parent.horizontalCenter
         anchors.right: parent.right
         anchors.margins: 16
@@ -55,7 +55,7 @@ Rectangle {
         model: cpuModel
         delegate: Item {
             width: view.width
-            height: view.height / 10
+            height: root.height / 10
             Rectangle {
                 anchors.fill: parent
                 anchors.margins: 1
@@ -122,7 +122,8 @@ Rectangle {
             }
             // overlay a radial gradient
             var gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius)
-            gradient.addColorStop(0.0, Qt.rgba(1.0, 1.0, 1.0, 0.0))
+            gradient.addColorStop(0.0, Qt.rgba(1.0, 1.0, 1.0, 0.3))
+            gradient.addColorStop(0.5, Qt.rgba(0.5, 0.5, 0.5, 0.0))
             gradient.addColorStop(1.0, Qt.rgba(0.0, 0.0, 0.0, 0.3))
             ctx.beginPath()
             ctx.moveTo(centerX, centerY)
@@ -155,7 +156,15 @@ Rectangle {
         var xhr = new XMLHttpRequest;
         console.log(root.url)
         xhr.open("GET", root.url);
-        var letters = '0123456789ABCDEF'.split('');
+        var colors = new Array;
+        colors[0] = "#FF9A40";
+        colors[1] = "#AC3BD4";
+        colors[2] = "#B4BD2F";
+        colors[3] = "#35C0CD";
+        colors[4] = "#FF4540";
+        colors[5] = "#7147D7";
+        colors[6] = "#FFE240";
+        colors[7] = "#39E444";
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 cpuModel.clear()
@@ -166,13 +175,7 @@ Rectangle {
                     var o = a[b]
                     for(var c in o) {
                         var o2 = o[c]
-                        var color = "#";
-                        var rNum = Math.min(Math.round(parseFloat(o2.y) / 100 * 15), 15)
-                        color += letters[rNum];
-                        color += "0";
-                        color += letters[15 - rNum];
-                        color += "0";
-                        color += "77"
+                        var color = colors[counter % colors.length];
                         console.log(color)
                         cpuModel.append({
                                             value: parseFloat(o2.y),
