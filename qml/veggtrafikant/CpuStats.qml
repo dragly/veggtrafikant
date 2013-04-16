@@ -91,8 +91,6 @@ Rectangle {
         // enable anti-aliasing
         smooth: true
         onPaint: {
-            console.log(cpuModel.count)
-            console.log(modelSum())
             var ctx = canvas.getContext('2d')
             ctx.clearRect(0, 0, width, height)
             // store the circles properties
@@ -150,11 +148,8 @@ Rectangle {
         return modelSum
     }
     function refresh() {
-        console.log("Wee!")
-        //                realtimeModel.clear()
-
         var xhr = new XMLHttpRequest;
-        console.log(root.url)
+        console.log("Requesting " + root.url)
         xhr.open("GET", root.url);
         var colors = new Array;
         colors[0] = "#FF9A40";
@@ -176,7 +171,6 @@ Rectangle {
                     for(var c in o) {
                         var o2 = o[c]
                         var color = colors[counter % colors.length];
-                        console.log(color)
                         cpuModel.append({
                                             value: parseFloat(o2.y),
                                             label: b,

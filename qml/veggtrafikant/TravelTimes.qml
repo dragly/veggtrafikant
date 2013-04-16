@@ -251,14 +251,11 @@ Rectangle {
     property int stationIdCounter: 0;
     property bool isRealtimeModelCleared: false;
     function refresh() {
-        console.log("nDepartures: " + nDepartures)
         var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
         if(stationIdCounter < stations.length) {
             var stationId = stations[stationIdCounter].stationId
             var directions = stations[stationIdCounter].directions
             var maxTime = stations[stationIdCounter].maxTime
-            console.log(stationIdCounter)
-            console.log(stationId)
             var xhr = new XMLHttpRequest;
             xhr.open("GET", "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId);
             console.log("http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId)
@@ -292,9 +289,7 @@ Rectangle {
                                                          platform: o.DirectionRef,
                                                          selected: false
                                                      });
-                                console.log("Added")
                             }
-                            console.log(o.PublishedLineName + " " + o.DestinationName + " " + timeDifferenceMinutes.toFixed(0) + " min")
 //                        }
 //                        counter++
                     }

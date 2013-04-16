@@ -30,7 +30,7 @@ Rectangle {
 
     CpuStats {
         id: cpuStats
-        url: "http://compphys.dragly.org/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1"
+        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1"
         title: "CPU usage"
         anchors.left: travelTimes.right
         anchors.top: travelTimes.top
@@ -42,7 +42,7 @@ Rectangle {
     CpuStats {
         id: memoryStats
         title: "Memory usage"
-        url: "http://compphys.dragly.org/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=memory&latest=1"
+        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=memory&latest=1"
         anchors.left: cpuStats.right
         anchors.top: cpuStats.top
 
@@ -86,7 +86,7 @@ Rectangle {
         }
     ]
 
-    state: "showTravelTimes"
+    state: "showCpuStats"
 
     transitions: [
         Transition {
@@ -97,6 +97,12 @@ Rectangle {
             }
         }
     ]
+
+    Keys.onPressed: {
+        if(event.key === Qt.Key_Q && event.modifiers & Qt.ControlModifier) {
+            Qt.quit()
+        }
+    }
 
     Timer {
         id: timer
