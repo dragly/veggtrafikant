@@ -1,3 +1,5 @@
+#include <settings.h>
+
 #ifdef QT_VERSION_IS_FIVE
 #include <QtGui/QGuiApplication>
 #include <QQuickItem>
@@ -14,18 +16,24 @@
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
+    QCoreApplication::setOrganizationName("Dragly");
+    QCoreApplication::setOrganizationDomain("dragly.org");
+    QCoreApplication::setApplicationName("Veggtrafikant");
+
     QGuiApplication app(argc, argv);
+    qmlRegisterType<Settings>("org.dragly.veggtrafikant", 1, 0, "SettingsStorage");
+
     //    QApplication::setGraphicsSystem("opengl");
 
-//    QVariant stations;
-//    if(argc > 1) {
-//        for(int i = 1; i < argc; i++) {
-//            stations << argv[i];
-//        }
-//    } else {
-//        stations << "3010011";
-//    }
-//    qDebug() << stationID;
+    //    QVariant stations;
+    //    if(argc > 1) {
+    //        for(int i = 1; i < argc; i++) {
+    //            stations << argv[i];
+    //        }
+    //    } else {
+    //        stations << "3010011";
+    //    }
+    //    qDebug() << stationID;
 
     qDebug() << "Starting database";
     QFontDatabase database;
@@ -45,14 +53,14 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setColor(QColor(Qt::transparent));
     viewer.setFlags(Qt::FramelessWindowHint);
     viewer.setFormat(surfaceFormat);
-//    viewer.setSurfaceType(QSurface::OpenGLSurface);
-//    QGLWidget* glWidget = new QGLWidget();
-//    glWidget->setAutoFillBackground(false);
-//    viewer.setViewport(glWidget);
-//    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
+    //    viewer.setSurfaceType(QSurface::OpenGLSurface);
+    //    QGLWidget* glWidget = new QGLWidget();
+    //    glWidget->setAutoFillBackground(false);
+    //    viewer.setViewport(glWidget);
+    //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
-//    viewer.rootObject()->setProperty("stations", stationID);
-//    viewer.showFullScreen();
+    //    viewer.rootObject()->setProperty("stations", stationID);
+    //    viewer.showFullScreen();
     viewer.showFullScreen();
 
     app.setFont(QFont("Ubuntu"));

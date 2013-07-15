@@ -1,4 +1,6 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
+import org.dragly.veggtrafikant 1.0
 
 Rectangle {
     id: root
@@ -6,7 +8,8 @@ Rectangle {
     width: 480
     height: 480
     smooth: true
-    //    color: "black"
+    focus: true
+
     gradient: Gradient {
         GradientStop{ position: 0.0; color: "#9ac1d4" }
         GradientStop{ position: 0.2; color: "#84b9d1" }
@@ -20,6 +23,13 @@ Rectangle {
         }
     }
 
+    SettingsStorage {
+        Component.onCompleted: {
+            setValue("stations", [{woot: "cookie", test: "banana"}, {woot: "lol", test: "apple"}])
+            console.log(value("stations")[0].woot)
+        }
+    }
+
     TravelTimes {
         id: travelTimes
         x: 0
@@ -28,65 +38,109 @@ Rectangle {
         height: parent.height
     }
 
-    CpuStats {
-        id: cpuStats
-        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1"
-        title: "CPU usage"
-        anchors.left: travelTimes.right
-        anchors.top: travelTimes.top
-
-        width: parent.width
-        height: parent.height
+    GaussianBlur {
+        id: travelTimesBlur
+        anchors.fill: parent
+        source: travelTimes
+        radius: parent.width / 48
+        samples: 16
+        enabled: false
+        opacity: 0
     }
 
-    CpuStats {
-        id: memoryStats
-        title: "Memory usage"
-        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=memory&latest=1"
-        anchors.left: cpuStats.right
-        anchors.top: cpuStats.top
-
-        width: parent.width
-        height: parent.height
+    Settings {
+        id: settings
+        anchors.fill: parent
+        enabled: false
+        opacity: 0
+        z: 999
+        onDone: {
+            root.state = ""
+            root.focus = true
+        }
     }
+
+    //    CpuStats {
+    //        id: cpuStats
+    //        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=cpu&latest=1"
+    //        title: "CPU usage"
+    //        anchors.left: travelTimes.right
+    //        anchors.top: travelTimes.top
+
+    //        width: parent.width
+    //        height: parent.height
+    //    }
+
+    //    CpuStats {
+    //        id: memoryStats
+    //        title: "Memory usage"
+    //        url: "http://comp-phys.net/wp-content/plugins/cpu-reporter/results.php?timeLimit=600&type=memory&latest=1"
+    //        anchors.left: cpuStats.right
+    //        anchors.top: cpuStats.top
+
+    //        width: parent.width
+    //        height: parent.height
+    //    }
+
+    //    states: [
+    //        State {
+    //            name: "showTravelTimes"
+    //            PropertyChanges {
+    //                target: children[0]
+    //                x: 0
+    //            }
+    //            PropertyChanges {
+    //                target: timer
+    //                interval: 30 * 1000
+    //            }
+    //        },
+    //        State {
+    //            name: "showCpuStats"
+    //            PropertyChanges {
+    //                target: children[0]
+    //                x: -parent.width
+    //            }
+    //            PropertyChanges {
+    //                target: timer
+    //                interval: 7 * 1000
+    //            }
+    //        },
+    //        State {
+    //            name: "showMemoryStats"
+    //            PropertyChanges {
+    //                target: children[0]
+    //                x: -parent.width * 2
+    //            }
+    //            PropertyChanges {
+    //                target: timer
+    //                interval: 7 * 1000
+    //            }
+    //        }
+    //    ]
+
+    //    state: "showTravelTimes"
 
     states: [
         State {
-            name: "showTravelTimes"
+            name: "settings"
+            PropertyChanges {
+                target: settings
+                enabled: true
+                opacity: 1
+                focus: true
+            }
+            PropertyChanges {
+                target: travelTimesBlur
+                enabled: true
+                opacity: 1
+            }
             PropertyChanges {
                 target: travelTimes
-                x: 0
-            }
-            PropertyChanges {
-                target: timer
-                interval: 30 * 1000
-            }
-        },
-        State {
-            name: "showCpuStats"
-            PropertyChanges {
-                target: travelTimes
-                x: -parent.width
-            }
-            PropertyChanges {
-                target: timer
-                interval: 7 * 1000
-            }
-        },
-        State {
-            name: "showMemoryStats"
-            PropertyChanges {
-                target: travelTimes
-                x: -parent.width * 2
-            }
-            PropertyChanges {
-                target: timer
-                interval: 7 * 1000
+                enabled: false
+                opacity: 0
             }
         }
     ]
-
-    state: "showCpuStats"
 
     transitions: [
         Transition {
@@ -95,12 +149,32 @@ Rectangle {
                 easing.type: Easing.InOutQuad
                 duration: 500
             }
+        },
+        Transition {
+            to: "settings"
+            PropertyAnimation {
+                properties: "opacity";
+                easing.type: Easing.InOutQuad
+                duration: 250
+            }
+        },
+        Transition {
+            from: "settings"
+            PropertyAnimation {
+                properties: "opacity";
+                easing.type: Easing.InOutQuad
+                duration: 250
+            }
         }
     ]
 
     Keys.onPressed: {
         if(event.key === Qt.Key_Q && event.modifiers & Qt.ControlModifier) {
             Qt.quit()
+        }
+        if(event.key === Qt.Key_Escape) {
+            state = "settings"
+//            showSettings()
         }
     }
 
