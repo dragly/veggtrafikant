@@ -35,12 +35,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //    }
     //    qDebug() << stationID;
 
-    qDebug() << "Starting database";
+//    qDebug() << "Starting database";
     QFontDatabase database;
     if(!database.addApplicationFont(":/fonts/ubuntu/Ubuntu-R.ttf")) {
         qWarning() << "Could not load Ubuntu font!";
     }
-    qDebug() << "font loaded";
+    app.setFont(QFont("Ubuntu"));
+//    qDebug() << "font loaded";
 
     QPixmap nullCursor(16, 16);
     nullCursor.fill(Qt::transparent);
@@ -62,7 +63,5 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //    viewer.rootObject()->setProperty("stations", stationID);
     //    viewer.showFullScreen();
     viewer.showFullScreen();
-
-    app.setFont(QFont("Ubuntu"));
     return app.exec();
 }

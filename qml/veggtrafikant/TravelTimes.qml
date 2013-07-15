@@ -1,6 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
 import QtQuick 2.0
 import QtQuick.XmlListModel 2.0
+import org.dragly.veggtrafikant 1.0
 import "constants.js" as UI
 import "helpers.js" as Helper
 
@@ -9,23 +10,125 @@ Rectangle {
 
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
-    property variant stations: [
-        {stationId: "3010360", directions: ["1","2"], maxTime: 8},
-    ]
+    //    property variant stations: []
     property int newsId: 0
     property int nDepartures: 6
+    property int stationIDCounter: 0;
+    property bool isRealtimeModelCleared: false;
+    property string yrLocationString: ""
+    property string feedURL: ""
 
     smooth: true
     color: "transparent"
 
+    function refresh() {
+        reloadWeather()
+        reloadFeed()
+        reloadTravelTimes()
+    }
+
+    function reloadTravelTimes() {
+        var stations = settingsStorage.value("stations")
+        if(!stations) {
+            return;
+        }
+
+        var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
+        if(stationIDCounter < stations.length) {
+            var stationID = stations[stationIDCounter].stationID
+            var directionsString = "" + stations[stationIDCounter].directions
+            var directions = directionsString.split(",")
+            if(!directions || directions[0] === "" || directions[0] === "all") {
+                directions = []
+            }
+
+            var minTime = stations[stationIDCounter].minTime
+            var xhr = new XMLHttpRequest;
+            var url = "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationID;
+            //            console.log("Requesting " + url)
+            xhr.open("GET", url);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if(stationIDCounter == 0) {
+                        realtimeModel.clear();
+                    }
+
+                    var a = JSON.parse(xhr.responseText);
+                    if(!isRealtimeModelCleared) {
+                        realtimeModel.clear();
+                        isRealtimeModelCleared = 1;
+                    }
+
+                    for (var b in a) {
+                        //                        if(counter < nDepartures) {
+                        var o = a[b]
+                        var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
+                        var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)
+                        var currentTime = Helper.parseDate(o.RecordedAtTime)
+                        var timeDifference = arrivalTime.getTime() - currentTime.getTime()
+                        var timeDifferenceMinutes = timeDifference / 60000
+                        if((directions.length === 0 || directions.indexOf(o.DirectionName) !== -1) && timeDifferenceMinutes > minTime) {
+                            var dataItem = {
+                                lineNumber: o.PublishedLineName,
+                                title: o.PublishedLineName + " " + o.DestinationName,
+                                arrivalTime: arrivalTime,
+                                timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
+                                subtitle: Qt.formatDateTime(arrivalTime, "hh:mm"),
+                                platform: o.DirectionRef,
+                                selected: false
+                            };
+                            realtimeModel.append(dataItem);
+                        }
+                        //                        }
+                        //                        counter++
+                    }
+                    var swapped = true; // let's perform a bubble sort! :D
+                    while(swapped) {
+                        swapped = false;
+                        for(var i = 0; i < realtimeModel.count - 1; i++) {
+                            if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
+                                realtimeModel.move(i,i+1,1);
+                                swapped = true;
+                            }
+                        }
+                    }
+                    stationIDCounter++;
+                    reloadTravelTimes();
+                }
+            }
+            xhr.send();
+        } else {
+            stationIDCounter = 0;
+
+            while(realtimeModel.count > nDepartures) {
+                realtimeModel.remove(realtimeModel.count - 1);
+            }
+            realtimeModel.loadCompleted()
+        }
+    }
+
+    function reloadWeather() {
+        yrLocationString = settingsStorage.value("yrLocationString", "Norge/Oslo/Oslo/Oslo")
+        weatherModel.reload()
+    }
+
+    function reloadFeed() {
+        feedURL = settingsStorage.value("feedURL", "http://www.nrk.no/nyheiter/siste.rss")
+        newsModel.reload()
+    }
+
+    SettingsStorage {
+        id: settingsStorage
+    }
+
     Timer {
-        id: refreshRealtime
+        id: refreshTravelTimes
         triggeredOnStart: true
         repeat: true
         running: true
         interval: 30000
         onTriggered: {
-            refresh()
+            reloadTravelTimes()
         }
     }
 
@@ -36,7 +139,7 @@ Rectangle {
         running: true
         interval: 30 * 60 * 1000
         onTriggered: {
-            weatherModel.reload()
+            reloadWeather()
         }
     }
 
@@ -58,7 +161,7 @@ Rectangle {
         running: true
         interval: 10 * 60 * 1000
         onTriggered: {
-            newsModel.reload()
+            reloadFeed()
         }
     }
 
@@ -215,7 +318,7 @@ Rectangle {
 
     XmlListModel {
         id: newsModel
-        source: "http://www.nrk.no/nyheiter/siste.rss"
+        source: feedURL
         query: "/rss/channel/item"
 
         XmlRole { name: "title"; query: "title/string()" }
@@ -231,7 +334,7 @@ Rectangle {
 
     XmlListModel {
         id: weatherModel
-        source: "http://www.yr.no/sted/Norge/Oslo/Oslo/Oslo/varsel.xml"
+        source: "http://www.yr.no/sted/" + yrLocationString + "/varsel.xml"
         query: "/weatherdata/forecast/tabular/time"
 
         XmlRole { name: "symbolNumber"; query: "symbol/@number/string()" }
@@ -240,81 +343,18 @@ Rectangle {
         onStatusChanged: {
             if(status == XmlListModel.Error) {
                 console.log("Yr.no error: " + weatherModel.errorString)
+                weatherText.text = "Error"
             }
             if(status == XmlListModel.Ready) {
-                weatherText.text = weatherModel.get(0).temperature + "°C"
-                weatherImage.source = "qrc:images/yr/" + weatherModel.get(0).symbolNumber + ".png"
-            }
-        }
-    }
-
-    property int stationIdCounter: 0;
-    property bool isRealtimeModelCleared: false;
-    function refresh() {
-        var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
-        if(stationIdCounter < stations.length) {
-            var stationId = stations[stationIdCounter].stationId
-            var directions = stations[stationIdCounter].directions
-            var maxTime = stations[stationIdCounter].maxTime
-            var xhr = new XMLHttpRequest;
-            xhr.open("GET", "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId);
-            console.log("http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationId)
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if(stationIdCounter == 0) {
-                        realtimeModel.clear();
-                    }
-
-                    var a = JSON.parse(xhr.responseText);
-                    if(!isRealtimeModelCleared) {
-                        realtimeModel.clear();
-                        isRealtimeModelCleared = 1;
-                    }
-
-                    for (var b in a) {
-//                        if(counter < nDepartures) {
-                            var o = a[b]
-                                var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
-                                var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)
-                                var currentTime = Helper.parseDate(o.RecordedAtTime)
-                                var timeDifference = arrivalTime.getTime() - currentTime.getTime()
-                                var timeDifferenceMinutes = timeDifference / 60000
-                                if(directions.indexOf(o.DirectionName) !== -1 && timeDifferenceMinutes > maxTime) {
-                                realtimeModel.append({
-                                                         lineNumber: o.PublishedLineName,
-                                                         title: o.PublishedLineName + " " + o.DestinationName,
-                                                         arrivalTime: arrivalTime,
-                                                         timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
-                                                         subtitle: Qt.formatDateTime(arrivalTime, "hh:mm"),
-                                                         platform: o.DirectionRef,
-                                                         selected: false
-                                                     });
-                            }
-//                        }
-//                        counter++
-                    }
-                    var swapped = true; // let's perform a bubble sort! :D
-                    while(swapped) {
-                        swapped = false;
-                        for(var i = 0; i < realtimeModel.count - 1; i++) {
-                            if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
-                                realtimeModel.move(i,i+1,1);
-                                swapped = true;
-                            }
-                        }
-                    }
-                    stationIdCounter++;
-                    refresh();
+                if(weatherModel.get(0)) {
+                    weatherText.text = weatherModel.get(0).temperature + "°C"
+                    weatherImage.source = "qrc:images/yr/" + weatherModel.get(0).symbolNumber + ".png"
+                } else {
+                    weatherText.text = "Error"
                 }
             }
-            xhr.send();
-        } else {
-            stationIdCounter = 0;
-
-            while(realtimeModel.count > nDepartures) {
-                realtimeModel.remove(realtimeModel.count - 1);
-            }
-            realtimeModel.loadCompleted()
         }
     }
+
+
 }

@@ -10,7 +10,6 @@ public:
     explicit Settings(QObject *parent = 0);
 
     Q_INVOKABLE QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
-
 signals:
     
 public slots:
