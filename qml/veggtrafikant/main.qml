@@ -74,9 +74,6 @@ Rectangle {
         if(event.key === Qt.Key_Escape) {
             state = "settings"
         }
-        if(event.key === Qt.Key_K) {
-            theme = someOtherTheme
-        }
     }
 
     SystemPalette {
@@ -177,6 +174,13 @@ Rectangle {
             } else if(root.state == "showMemoryStats") {
                 root.state = "showTravelTimes"
             }
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            state = "settings"
         }
     }
 }

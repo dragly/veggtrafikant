@@ -43,8 +43,6 @@ RESOURCES += \
 TARGET = veggtrafikant
 
 OTHER_FILES += \
-    qml/veggtrafikant/TravelTimes.qml \
-    qml/veggtrafikant/settings/FeedSettings.qml \
     android/version.xml \
     android/res/values-it/strings.xml \
     android/res/values-ms/strings.xml \
