@@ -50,7 +50,7 @@ Item {
                     text: model.text
                     font.pixelSize: delegateItem.height * 0.5
                     font.weight: Font.Light
-                    color: exitView.activeFocus && delegateItem.ListView.isCurrentItem ? "#EFEFEF" : "#00283B"
+                    color: exitView.activeFocus && delegateItem.ListView.isCurrentItem ? theme.strongBack : theme.duseFront
 
                     Behavior on color {
                         ColorAnimation { duration: 200 }
@@ -61,7 +61,7 @@ Item {
             highlight: Rectangle {
                 width: topLevelView.width
                 height: topLevelView.width * 0.2
-                color: exitView.activeFocus ? "#71CBF6" : "transparent"
+                color: exitView.activeFocus ? theme.middle : "transparent"
             }
 
             Keys.onPressed: {

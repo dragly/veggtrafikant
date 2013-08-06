@@ -13,7 +13,7 @@ Item {
     width: parent.width
     Rectangle {
         anchors.fill: parent
-        color: textEdit.activeFocus ? "#0578AF" : "#00283B"
+        color: textEdit.activeFocus ? theme.strongFront : theme.duseFront
     }
 
     TextEdit {
@@ -26,6 +26,6 @@ Item {
         }
 
         font.pixelSize: parent.height * 0.5
-        color: activeFocus ? "white" : "#C6E6F6"
+        color: activeFocus ? theme.strongBack : theme.duseBack
     }
 }

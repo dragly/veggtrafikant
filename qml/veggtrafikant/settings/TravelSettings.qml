@@ -83,7 +83,7 @@ Item {
                     text: model.name
                     font.pixelSize: delegateItem.height * 0.5
                     font.weight: Font.Light
-                    color: exitView.activeFocus && delegateItem.ListView.isCurrentItem ? "#EFEFEF" : "#00283B"
+                    color: stationSelector.activeFocus && delegateItem.ListView.isCurrentItem ? theme.strongBack : theme.duseFront
 
                     Behavior on color {
                         ColorAnimation { duration: 200 }
@@ -94,7 +94,7 @@ Item {
             highlight: Rectangle {
                 width: stationSelector.width
                 height: stationSelector.width * 0.2
-                color: stationSelector.activeFocus ? "#71CBF6" : "transparent"
+                color: stationSelector.activeFocus ? theme.middle : "transparent"
             }
 
             KeyNavigation.down: addButton
@@ -112,7 +112,7 @@ Item {
             id: addButton
             font.pixelSize: timetableSettingsRoot.width * 0.04
             text: "Add"
-            color: focus ? "white" : "grey"
+            color: focus ? theme.strongFront : theme.duseFront
 
             Keys.onPressed: {
                 if(event.key === Qt.Key_Return) {
@@ -156,14 +156,14 @@ Item {
                 Text {
                     text: "Min. time:"
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ? "white" : "grey"
+                    color: focus ? theme.strongFront : theme.duseFront
                 }
                 TextEdit {
                     id: minTimeTextEdit
                     text: "0"
                     inputMethodHints: Qt.ImhDigitsOnly
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ? "white" : "grey"
+                    color: focus ?  theme.strongFront : theme.duseFront
                     onTextChanged: {
                         if(stationSelector.currentItem) {
                             var currentData = stationSelector.model.get(stationSelector.currentIndex)
@@ -180,14 +180,14 @@ Item {
                 Text {
                     text: "Directions:"
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ? "white" : "grey"
+                    color: focus ?  theme.strongFront : theme.duseFront
                 }
                 TextEdit {
                     id: directionsTextEdit
                     text: "0"
                     inputMethodHints: Qt.ImhDigitsOnly
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ? "white" : "grey"
+                    color: focus ?  theme.strongFront : theme.duseFront
                     onTextChanged: {
                         if(stationSelector.currentItem) {
                             var currentData = stationSelector.model.get(stationSelector.currentIndex)
@@ -204,7 +204,7 @@ Item {
                 id: deleteButton
                 text: "Delete"
                 font.pixelSize: timetableSettingsRoot.width * 0.04
-                color: focus ? "white" : "grey"
+                color: focus ?  theme.strongFront : theme.duseFront
                 KeyNavigation.up: directionsTextEdit
 
                 Keys.onPressed: {

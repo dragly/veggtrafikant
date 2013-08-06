@@ -36,7 +36,7 @@ Item {
         Text {
             text: qsTr("See http://om.yr.no/verdata/xml/ for more information.")
             font.pixelSize: parent.width * 0.03
-            color: "grey"
+            color: theme.duseFront
         }
     }
 }

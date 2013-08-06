@@ -49,7 +49,6 @@ Item {
 
     property int titleSize: UI.LIST_TILE_SIZE
     property int titleWeight: Font.Normal
-    property color titleColor: UI.LIST_TITLE_COLOR_INVERTED
 
     property int subtitleSize: UI.LIST_SUBTILE_SIZE
     property int subtitleWeight: Font.Light
@@ -64,8 +63,7 @@ Item {
         font.weight: Font.Light
         font.pixelSize: listItem.titleSize
         height: listItem.titleSize * 1.1
-        //        color: (parseInt(model.lineNumber) <= 6) ? listItem.titleColor : "yellow"
-        color: listItem.titleColor
+        color: theme.travelText
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -75,8 +73,7 @@ Item {
         text: model.timeLeft
         font.weight: Font.Normal
         font.pixelSize: listItem.subtitleSize
-        //        color: (parseInt(model.lineNumber) <= 6) ? listItem.titleColor : "yellow"
-        color: listItem.titleColor
+        color: theme.travelText
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
     }

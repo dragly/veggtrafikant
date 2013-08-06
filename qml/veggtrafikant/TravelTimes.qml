@@ -5,7 +5,7 @@ import org.dragly.veggtrafikant 1.0
 import "constants.js" as UI
 import "helpers.js" as Helper
 
-Rectangle {
+Item {
     id: root
 
     property real defaultMargin: UI.MARGIN_XLARGE
@@ -19,7 +19,7 @@ Rectangle {
     property string feedURL: ""
 
     smooth: true
-    color: "transparent"
+//    color: "transparent"
 
     function refresh() {
         reloadWeather()
@@ -249,7 +249,7 @@ Rectangle {
                 anchors.left: parent.left
 
                 text: "Clock"
-                color: "white"
+                color: theme.travelText
             }
             Text {
                 id: weatherText
@@ -260,7 +260,7 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
 
                 text: "Weather"
-                color: "white"
+                color: theme.travelText
             }
             Image {
                 id: weatherImage
@@ -302,7 +302,7 @@ Rectangle {
         Text {
             id: newsText
             text: "Updating news..."
-            color: "white"
+            color: theme.travelText
             height: root.height * 0.18
             font.pixelSize: root.height * 0.038
             anchors {

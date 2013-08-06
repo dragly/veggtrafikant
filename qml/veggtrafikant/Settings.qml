@@ -56,7 +56,7 @@ Item {
         Rectangle {
             id: topLevelViewBackground
             anchors.fill: parent
-            color: "#C6E6F6"
+            color: theme.duseBack
             opacity: 0.7
         }
 
@@ -70,7 +70,7 @@ Item {
             }
 
             text: "Settings"
-            color: "#00283B"
+            color: theme.middle
             font.pixelSize: parent.width * 0.1
             font.weight: Font.Light
         }
@@ -99,7 +99,7 @@ Item {
                         verticalCenter: parent.verticalCenter
                     }
                     text: model.name
-                    color: delegateItem.ListView.isCurrentItem ? "#EFEFEF" : "#00283B"
+                    color: delegateItem.ListView.isCurrentItem ? theme.strongBack : theme.strongFront
                     font.weight: Font.Light
                     font.pixelSize: delegateItem.height * 0.5
 
@@ -111,7 +111,7 @@ Item {
             highlight: Rectangle {
                 width: topLevelView.width
                 height: topLevelView.width * 0.2
-                color: "#71CBF6"
+                color: theme.middle
             }
 
             Keys.onPressed: {
@@ -146,7 +146,7 @@ Item {
         Rectangle {
             id: background
             anchors.fill: parent
-            color: "white"
+            color: theme.strongBack
             opacity: 0.7
         }
 

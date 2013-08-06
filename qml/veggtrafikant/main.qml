@@ -5,10 +5,67 @@ import org.dragly.veggtrafikant 1.0
 Rectangle {
     id: root
 
+    property Style theme: Style {}
+
     width: 480
     height: 480
     smooth: true
     focus: true
+
+    Timer {
+        id: refreshTheme
+        triggeredOnStart: true
+        repeat: true
+        running: true
+        interval: 60 * 1000
+        onTriggered: {
+            var hour = parseInt(Qt.formatDateTime(new Date(), "hh"))
+            if(hour > 7 && hour < 21) {
+                theme = dayTheme
+            } else {
+                theme = nightTheme
+            }
+        }
+    }
+
+    Style {
+        id: dayTheme
+        background: Gradient {
+            GradientStop{ position: 0.0; color: "#71CBF6" }
+            GradientStop{ position: 0.2; color: "#71CBF6" }
+            GradientStop{ position: 0.8; color: "#0578AF" }
+        }
+        highlight: "#84D7FF"
+        headings: "#0578AF"
+        textHighlight: "#E6F7FF"
+        text: "#002334"
+        travelText: "#E6F7FF"
+
+        duseBack: "#84D7FF"
+        strongBack: "#E6F7FF"
+        middle: "#0578AF"
+        duseFront: "#2D4A57"
+        strongFront: "#002334"
+    }
+
+    Style {
+        id: nightTheme
+        text: "#0000FF"
+
+        background: Gradient {
+            GradientStop{ position: 0.0; color: "#002334" }
+            GradientStop{ position: 0.8; color: "#002334" }
+            GradientStop{ position: 0.9; color: "#2D4A57" }
+            GradientStop{ position: 1.0; color: "#FFC480" }
+        }
+        travelText: "#E6F7FF"
+
+        duseBack: "#2D4A57"
+        strongBack: "#002334"
+        middle: "#0578AF"
+        duseFront: "#84D7FF"
+        strongFront: "#E6F7FF"
+    }
 
     Keys.onPressed: {
         if(event.key === Qt.Key_Q && event.modifiers & Qt.ControlModifier) {
@@ -17,20 +74,17 @@ Rectangle {
         if(event.key === Qt.Key_Escape) {
             state = "settings"
         }
-    }
-
-    gradient: Gradient {
-        GradientStop{ position: 0.0; color: "#9ac1d4" }
-        GradientStop{ position: 0.2; color: "#84b9d1" }
-        GradientStop{
-            position: 0.8;
-            SequentialAnimation on color {
-                loops: Animation.Infinite
-                ColorAnimation { from: "#466fab"; to: "#618cbf"; duration: 10000 }
-                ColorAnimation { from: "#618cbf"; to: "#466fab"; duration: 10000 }
-            }
+        if(event.key === Qt.Key_K) {
+            theme = someOtherTheme
         }
     }
+
+    SystemPalette {
+        id: sysPalette
+        colorGroup: SystemPalette.Active
+    }
+
+    gradient: theme.background
 
     TravelTimes {
         id: travelTimes
