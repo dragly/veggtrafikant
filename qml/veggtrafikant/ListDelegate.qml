@@ -61,7 +61,7 @@ Item {
     Text {
         id: mainText
         text: model.title
-        font.weight: listItem.titleWeight
+        font.weight: Font.Light
         font.pixelSize: listItem.titleSize
         height: listItem.titleSize * 1.1
         //        color: (parseInt(model.lineNumber) <= 6) ? listItem.titleColor : "yellow"
@@ -73,7 +73,7 @@ Item {
     Text {
         id: timeText
         text: model.timeLeft
-        font.weight: Font.Bold
+        font.weight: Font.Normal
         font.pixelSize: listItem.subtitleSize
         //        color: (parseInt(model.lineNumber) <= 6) ? listItem.titleColor : "yellow"
         color: listItem.titleColor

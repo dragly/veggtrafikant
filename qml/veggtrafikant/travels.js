@@ -1,8 +1,6 @@
 var latestRequestedURL = ""
 
 function findStations(searchText, realtime, searchModel) {
-//    console.log(searchText)
-
     var xhr = new XMLHttpRequest;
     var url
     if(realtime) {
@@ -11,7 +9,6 @@ function findStations(searchText, realtime, searchModel) {
         url = "http://services.epi.trafikanten.no/Place/FindMatches/" +  searchText
     }
     latestRequestedURL = url;
-//    console.log("Requesting " + url)
     xhr.open("GET", url);
 
     xhr.onreadystatechange = function() {

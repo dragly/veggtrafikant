@@ -245,6 +245,7 @@ Rectangle {
                 id: clockText
 
                 font.pixelSize: parent.height * 0.8
+                font.weight: Font.Light
                 anchors.left: parent.left
 
                 text: "Clock"
@@ -254,6 +255,7 @@ Rectangle {
                 id: weatherText
 
                 font.pixelSize: parent.height * 0.7
+                font.weight: Font.Light
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
 

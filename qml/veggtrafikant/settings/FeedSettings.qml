@@ -2,18 +2,18 @@ import QtQuick 2.0
 import org.dragly.veggtrafikant 1.0
 
 Item {
-    id: weatherSettingsRoot
-    enabled: false
-    opacity: 0
-    anchors.fill: parent
-    anchors.topMargin: parent.height
+    id: feedSettingsRoot
+
+    signal done()
+
+    focus: true
 
     Component.onCompleted: {
         feedTextEdit.text = settingsStorage.value("feedURL", "http://www.nrk.no/nyheiter/siste.rss")
     }
 
-    onFocusChanged: {
-        if(focus) {
+    onActiveFocusChanged: {
+        if(activeFocus) {
             feedTextEdit.focus = true
         }
     }
@@ -25,18 +25,11 @@ Item {
     Column {
         anchors.fill: parent
         spacing: settingsRoot.height * 0.02
-        Text {
-            text: qsTr("Feed URL:")
-            font.pixelSize: parent.width * 0.05
-            color: "grey"
+        SettingsHeading {
+            text: qsTr("Feed Location")
         }
-        TextEdit {
+        SettingsTextEdit {
             id: feedTextEdit
-            height: parent.width * 0.05
-            width: parent.width
-            text: ""
-            font.pixelSize: parent.width * 0.04
-            color: activeFocus ? "white" : "grey"
 
             onTextChanged: {
                 settingsStorage.setValue("feedURL", text)

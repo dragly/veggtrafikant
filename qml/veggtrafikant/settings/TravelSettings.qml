@@ -1,9 +1,11 @@
 import QtQuick 2.0
 import org.dragly.veggtrafikant 1.0
-import "travels.js" as Travels
+import "../travels.js" as Travels
 
 Item {
     id: timetableSettingsRoot
+
+    focus: true
 
     Component.onCompleted: {
         var allStations = settingsStorage.value("stations", null)
@@ -48,35 +50,51 @@ Item {
 
     Column {
         id: stationColumn
-        width: parent.width / 2
+        width: parent.width * 0.5
         anchors {
             left: parent.left
             top: parent.top
             bottom: parent.bottom
         }
         spacing: settingsRoot.height * 0.02
+        SettingsHeading {
+            text: qsTr("Selected stations")
+            font.pixelSize: timetableSettingsRoot.width * 0.05
+        }
 
         ListView {
             id: stationSelector
 
             width: parent.width
-            height: parent.height - addButton.height * 2
+//            height: parent.height - addButton.height * 2
+            height: timetableSettingsRoot.width * 0.1 * count
             model: stationsModel
             clip: true
-            highlight: Rectangle {
-                color: stationSelector.activeFocus ? "white" : "lightgrey"
-                width: stationSelector.width
-                radius: timetableSettingsRoot.width * 0.01
-                opacity: 0.1
-            }
             delegate: Text {
+                id: delegateItem
                 property variant myData: model
-                width: parent.width
-                anchors.horizontalCenter: parent.horizontalCenter
-                height: timetableSettingsRoot.width * 0.05
-                text: name
-                font.pixelSize: timetableSettingsRoot.width * 0.04
-                color: activeFocus ? "white" : "grey"
+                width: stationSelector.width
+                height: timetableSettingsRoot.width * 0.1
+                Text {
+                    anchors {
+                        left: parent.left
+                        verticalCenter: parent.verticalCenter
+                    }
+                    text: model.name
+                    font.pixelSize: delegateItem.height * 0.5
+                    font.weight: Font.Light
+                    color: exitView.activeFocus && delegateItem.ListView.isCurrentItem ? "#EFEFEF" : "#00283B"
+
+                    Behavior on color {
+                        ColorAnimation { duration: 200 }
+                    }
+                }
+            }
+
+            highlight: Rectangle {
+                width: stationSelector.width
+                height: stationSelector.width * 0.2
+                color: stationSelector.activeFocus ? "#71CBF6" : "transparent"
             }
 
             KeyNavigation.down: addButton
@@ -94,7 +112,7 @@ Item {
             id: addButton
             font.pixelSize: timetableSettingsRoot.width * 0.04
             text: "Add"
-            color: activeFocus ? "white" : "grey"
+            color: focus ? "white" : "grey"
 
             Keys.onPressed: {
                 if(event.key === Qt.Key_Return) {
@@ -138,14 +156,14 @@ Item {
                 Text {
                     text: "Min. time:"
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: activeFocus ? "white" : "grey"
+                    color: focus ? "white" : "grey"
                 }
                 TextEdit {
                     id: minTimeTextEdit
                     text: "0"
                     inputMethodHints: Qt.ImhDigitsOnly
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: activeFocus ? "white" : "grey"
+                    color: focus ? "white" : "grey"
                     onTextChanged: {
                         if(stationSelector.currentItem) {
                             var currentData = stationSelector.model.get(stationSelector.currentIndex)
@@ -162,14 +180,14 @@ Item {
                 Text {
                     text: "Directions:"
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: activeFocus ? "white" : "grey"
+                    color: focus ? "white" : "grey"
                 }
                 TextEdit {
                     id: directionsTextEdit
                     text: "0"
                     inputMethodHints: Qt.ImhDigitsOnly
                     font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: activeFocus ? "white" : "grey"
+                    color: focus ? "white" : "grey"
                     onTextChanged: {
                         if(stationSelector.currentItem) {
                             var currentData = stationSelector.model.get(stationSelector.currentIndex)
@@ -186,7 +204,7 @@ Item {
                 id: deleteButton
                 text: "Delete"
                 font.pixelSize: timetableSettingsRoot.width * 0.04
-                color: activeFocus ? "white" : "grey"
+                color: focus ? "white" : "grey"
                 KeyNavigation.up: directionsTextEdit
 
                 Keys.onPressed: {
@@ -253,7 +271,7 @@ Item {
                 height: timetableSettingsRoot.width * 0.05
                 font.pixelSize: timetableSettingsRoot.width * 0.04
                 width: parent.width
-                color: activeFocus ? "white" : "grey"
+                color: focus ? "white" : "grey"
 
                 text: ""
                 onTextChanged: {
@@ -285,7 +303,7 @@ Item {
                     }
                 }
                 highlight: Rectangle {
-                    color: searchListView.activeFocus ? "white" : "lightgrey"
+                    color: searchListView.focus ? "white" : "lightgrey"
                     width: parent.width
                     radius: timetableSettingsRoot.width * 0.01
                     opacity: 0.1

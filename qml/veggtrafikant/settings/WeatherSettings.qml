@@ -3,17 +3,15 @@ import org.dragly.veggtrafikant 1.0
 
 Item {
     id: weatherSettingsRoot
-    enabled: false
-    opacity: 0
-    anchors.fill: parent
-    anchors.topMargin: parent.height
+
+    focus: true
 
     Component.onCompleted: {
         locationTextEdit.text = settingsStorage.value("yrLocationString", "Norge/Oslo/Oslo/Oslo")
     }
 
-    onFocusChanged: {
-        if(focus) {
+    onActiveFocusChanged: {
+        if(activeFocus) {
             locationTextEdit.focus = true
         }
     }
@@ -25,18 +23,11 @@ Item {
     Column {
         anchors.fill: parent
         spacing: settingsRoot.height * 0.02
-        Text {
-            text: qsTr("Location:")
-            font.pixelSize: parent.width * 0.05
-            color: "grey"
+        SettingsHeading {
+            text: qsTr("Location")
         }
-        TextEdit {
+        SettingsTextEdit {
             id: locationTextEdit
-            height: parent.width * 0.05
-            width: parent.width
-            text: ""
-            font.pixelSize: parent.width * 0.04
-            color: activeFocus ? "white" : "grey"
 
             onTextChanged: {
                 settingsStorage.setValue("yrLocationString", text)

@@ -61,7 +61,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
     //    viewer.rootObject()->setProperty("stations", stationID);
-    //    viewer.showFullScreen();
-    viewer.showFullScreen();
+        viewer.showFullScreen();
+//    viewer.showFullScreen();
     return app.exec();
 }

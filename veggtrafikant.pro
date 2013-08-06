@@ -47,7 +47,8 @@ RESOURCES += \
 TARGET = veggtrafikant
 
 OTHER_FILES += \
-    qml/veggtrafikant/TravelTimes.qml
+    qml/veggtrafikant/TravelTimes.qml \
+    qml/veggtrafikant/settings/FeedSettings.qml
 
 HEADERS += \
     settings.h
