@@ -1,28 +1,36 @@
 var latestRequestedURL = ""
 
 function findStations(searchText, realtime, searchModel) {
+    if(searchText === "") {
+        return;
+    }
+
     var xhr = new XMLHttpRequest;
     var url
-    if(realtime) {
-        url = "http://services.epi.trafikanten.no/RealTime/FindMatches/" +  searchText
-    } else {
-        url = "http://services.epi.trafikanten.no/Place/FindMatches/" +  searchText
-    }
+    url = "http://reisapi.ruter.no/Place/GetPlaces/" +  searchText + "?json=true"
     latestRequestedURL = url;
     xhr.open("GET", url);
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE && latestRequestedURL === url) {
-            var a = JSON.parse(xhr.responseText);
-            searchModel.clear()
-            for (var b in a) {
-                var o = a[b];
-                if(o.Type === 0) // we don't want areas yet
-                    searchModel.append({name: o.Name, stationID: o.ID});
-//                console.log(o.ID)
+            try {
+                var stops = JSON.parse(xhr.responseText);
+                searchModel.clear()
+                for (var stopi in stops) {
+                    var stop = stops[stopi];
+                    if(stop.PlaceType === "Stop") { // we only accept stops
+                        searchModel.append({name: stop.Name, stationID: stop.ID});
+                        var lines = stop.Lines;
+                        for(var linei in lines) {
+                            var line = lines[linei];
+                            console.log(line.Name);
+                        }
+                    }
+                }
+                searchModel.loadCompleted()
+            } catch (error) {
+                console.log("Could not parse JSON response from " + url)
             }
-
-            searchModel.loadCompleted()
         }
     }
     xhr.send();

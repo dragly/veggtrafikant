@@ -1,11 +1,17 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
 import org.dragly.veggtrafikant 1.0
 import "../travels.js" as Travels
+import ".."
 
 Item {
     id: timetableSettingsRoot
 
+    property Style theme: Style {}
+
     focus: true
+    clip: true
 
     Component.onCompleted: {
         var allStations = settingsStorage.value("stations", null)
@@ -36,7 +42,7 @@ Item {
 
     onActiveFocusChanged: {
         if(activeFocus) {
-            stationSelector.focus = true
+            stationSelectorListView.focus = true
         }
     }
 
@@ -48,276 +54,270 @@ Item {
         id: settingsStorage
     }
 
-    Column {
-        id: stationColumn
-        width: parent.width * 0.5
-        anchors {
-            left: parent.left
-            top: parent.top
-            bottom: parent.bottom
-        }
-        spacing: settingsRoot.height * 0.02
-        SettingsHeading {
-            text: qsTr("Selected stations")
-            font.pixelSize: timetableSettingsRoot.width * 0.05
-        }
+    StationSettingsOverlay {
+        id: stationSettingsOverlay
+        visible: false
 
-        ListView {
-            id: stationSelector
+        width: parent.width
+        height: parent.height
 
-            width: parent.width
-//            height: parent.height - addButton.height * 2
-            height: timetableSettingsRoot.width * 0.1 * count
-            model: stationsModel
-            clip: true
-            delegate: Text {
-                id: delegateItem
-                property variant myData: model
-                width: stationSelector.width
-                height: timetableSettingsRoot.width * 0.1
-                Text {
-                    anchors {
-                        left: parent.left
-                        verticalCenter: parent.verticalCenter
-                    }
-                    text: model.name
-                    font.pixelSize: delegateItem.height * 0.5
-                    font.weight: Font.Light
-                    color: stationSelector.activeFocus && delegateItem.ListView.isCurrentItem ? theme.strongBack : theme.duseFront
-
-                    Behavior on color {
-                        ColorAnimation { duration: 200 }
-                    }
-                }
-            }
-
-            highlight: Rectangle {
-                width: stationSelector.width
-                height: stationSelector.width * 0.2
-                color: stationSelector.activeFocus ? theme.middle : "transparent"
-            }
-
-            KeyNavigation.down: addButton
-            KeyNavigation.right: stationSettings
-
-            onCurrentItemChanged: {
-                if(currentIndex >= 0) {
-                    stationSettings.minTime = currentItem.myData.minTime
-                    stationSettings.directions = currentItem.myData.directions
-                }
-            }
+        onDeleteStation: {
+            stationSelectorListView.model.remove(stationSelectorListView.currentIndex)
+            timetableSettingsRoot.focus = true
+            saveStations()
+            stackView.pop()
         }
 
-        Text {
-            id: addButton
-            font.pixelSize: timetableSettingsRoot.width * 0.04
-            text: "Add"
-            color: focus ? theme.strongFront : theme.duseFront
-
-            Keys.onPressed: {
-                if(event.key === Qt.Key_Return) {
-                    searchOverlay.enabled = true
-                    searchOverlay.opacity = 1
-                    searchOverlay.focus = true
-                }
+        onDone: {
+            if(stationSelectorListView.currentItem) {
+                var currentData = stationSelectorListView.model.get(stationSelectorListView.currentIndex)
+                currentData.minTime = parseInt(minTime)
+                currentData.directions = directions
+                stationSelectorListView.model.set(stationSelectorListView.currentIndex, currentData)
+                saveStations()
             }
+            stackView.pop()
+        }
+
+        onCancel: {
+            stackView.pop()
+        }
+    }
+
+    SearchOverlay  {
+        id: searchOverlay
+        visible: false
+        width: parent.width
+        height: parent.height
+        onDone: {
+            var station = {name: name, stationID: "" + stationID, directions: "all", minTime: 0};
+            lineSelector.station = station
+            stackView.push(lineSelector)
+        }
+    }
+
+    LineSelector {
+        id: lineSelector
+        visible: false
+        width: parent.width
+        height: parent.height
+        onDone: {
+            stackView.pop(currentStops)
+            timetableSettingsRoot.addStation(station);
+            timetableSettingsRoot.focus = true
         }
     }
 
     Item {
-        id: stationSettings
+        id: linesSelector
+        visible: false
+        width: parent.width
+        height: parent.height
+    }
 
-        property alias minTime: minTimeTextEdit.text
-        property alias directions: directionsTextEdit.text
+    Row {
+        id: headingRow
+        height: timetableSettingsRoot.width * 0.08
+        width: parent.width
+        Image {
+            source: "../images/navigation_previous_item.png"
+            width: parent.height
+            height: width
+            visible: stackView.depth > 1
 
-        anchors {
-            left: stationColumn.right
-            leftMargin: parent.width * 0.02
-            right: parent.right
-            top: parent.top
-            bottom: parent.bottom
-        }
-
-        visible: stationSelector.focus || stationSettings.focus || minTimeTextEdit.focus || directionsTextEdit.focus || deleteButton.focus
-
-        KeyNavigation.left: stationSelector
-
-        onFocusChanged: {
-            if(focus) {
-                minTimeTextEdit.focus = true
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    stackView.pop()
+                }
             }
         }
 
+        SettingsHeading {
+            id: travelSettingsHeading
+            text: qsTr("Stations")
+            font.pixelSize: timetableSettingsRoot.width * 0.05
+        }
+    }
+
+    Item {
+        id: currentStops
+        width: parent.width
+        height: parent.height
         Column {
+            id: stationColumn
             anchors.fill: parent
-            spacing: timetableSettingsRoot.width * 0.01
-            Row {
-                spacing: timetableSettingsRoot.width * 0.01
-                Text {
-                    text: "Min. time:"
-                    font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ? theme.strongFront : theme.duseFront
-                }
-                TextEdit {
-                    id: minTimeTextEdit
-                    text: "0"
-                    inputMethodHints: Qt.ImhDigitsOnly
-                    font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ?  theme.strongFront : theme.duseFront
-                    onTextChanged: {
-                        if(stationSelector.currentItem) {
-                            var currentData = stationSelector.model.get(stationSelector.currentIndex)
-                            currentData.minTime = parseInt(text)
-                            stationSelector.model.set(stationSelector.currentIndex, currentData)
-                            saveStations()
+            spacing: settingsRoot.height * 0.02
+
+            Item {
+                width: parent.width
+                height: stationSelectorListView.height
+
+                ListView {
+                    id: stationSelectorListView
+
+                    SettingsListViewBackground {
+                        anchors.fill: parent
+                    }
+
+                    width: parent.width
+                    //            height: parent.height - addButton.height * 2
+                    height: timetableSettingsRoot.width * 0.1 * count
+                    model: stationsModel
+                    clip: true
+                    delegate: Item {
+                        id: delegateItem
+                        property variant myData: model
+                        property bool isCurrent: stationSelectorListView.activeFocus && delegateItem.ListView.isCurrentItem
+                        width: stationSelectorListView.width
+                        height: timetableSettingsRoot.width * 0.1
+
+                        Rectangle {
+                            anchors {
+                                bottom: parent.bottom
+                                left: stationNameText.left
+                                right: parent.right
+                            }
+                            height: 2
+                            color: theme.strongFront
+                            opacity: 0.1
+                            visible: index < stationSelectorListView.model.count - 1
+                        }
+
+                        Text {
+                            id: stationNameText
+                            anchors {
+                                left: parent.left
+                                verticalCenter: parent.verticalCenter
+                                leftMargin: parent.width * 0.03
+                            }
+                            text: model.name
+                            font.pixelSize: delegateItem.height * 0.4
+                            font.weight: Font.Light
+                            color: theme.strongFront
+
+                            Behavior on color {
+                                ColorAnimation { duration: 200 }
+                            }
+                        }
+//                        MouseArea {
+//                            anchors.fill: parent
+//                            onClicked: {
+//                                stationSelectorListView.currentIndex = index
+//                                stackView.push(stationSettingsOverlay)
+//                            }
+//                        }
+                    }
+
+                    KeyNavigation.down: addButton
+                    KeyNavigation.right: stationSettingsOverlay
+
+                    onCurrentItemChanged: {
+                        if(currentIndex >= 0) {
+                            stationSettingsOverlay.minTime = currentItem.myData.minTime
+                            stationSettingsOverlay.directions = currentItem.myData.directions
                         }
                     }
-                    KeyNavigation.down: directionsTextEdit
                 }
             }
-            Row {
-                spacing: timetableSettingsRoot.width * 0.01
-                Text {
-                    text: "Directions:"
-                    font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ?  theme.strongFront : theme.duseFront
+
+            SettingsButton {
+                id: addButton
+                text: "Add"
+
+                function startSearch() {
+                    searchOverlay.visible = true
+                    stackView.push(searchOverlay)
                 }
-                TextEdit {
-                    id: directionsTextEdit
-                    text: "0"
-                    inputMethodHints: Qt.ImhDigitsOnly
-                    font.pixelSize: timetableSettingsRoot.width * 0.04
-                    color: focus ?  theme.strongFront : theme.duseFront
-                    onTextChanged: {
-                        if(stationSelector.currentItem) {
-                            var currentData = stationSelector.model.get(stationSelector.currentIndex)
-                            currentData.directions = text
-                            stationSelector.model.set(stationSelector.currentIndex, currentData)
-                            saveStations()
-                        }
-                    }
-                    KeyNavigation.up: minTimeTextEdit
-                    KeyNavigation.down: deleteButton
-                }
-            }
-            Text {
-                id: deleteButton
-                text: "Delete"
-                font.pixelSize: timetableSettingsRoot.width * 0.04
-                color: focus ?  theme.strongFront : theme.duseFront
-                KeyNavigation.up: directionsTextEdit
 
                 Keys.onPressed: {
                     if(event.key === Qt.Key_Return) {
-                        stationSelector.model.remove(stationSelector.currentIndex)
-                        timetableSettingsRoot.focus = true
-                        saveStations()
+                        startSearch()
                     }
+                }
+                onClicked: {
+                    addButton.startSearch()
                 }
             }
         }
     }
 
-    Item {
-        id: searchOverlay
-
-        signal done
-
-        width: parent.width * 0.8
-        height: parent.height * 0.8
-        anchors.centerIn: parent
-
-        enabled: false
-        opacity: 0
-
-        onDone: {
-            enabled = false
-            opacity = 0
-            timetableSettingsRoot.focus = true
+    StackView {
+        id: stackView
+        anchors {
+            top: headingRow.bottom
+            topMargin: parent.width * 0.05
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
         }
-
-        onFocusChanged: {
-            if(focus) {
-                searchTextEdit.focus = true
+        focus: true
+        Keys.onReleased: {
+            if (event.key === Qt.Key_Back && stackView.depth > 1) {
+                stackView.pop();
+                event.accepted = true;
             }
         }
-
-        ListModel {
-            id: searchModel
-            signal loadCompleted()
-        }
-
-        Rectangle {
-            id: background
-            anchors.fill: parent
-            radius: parent.width * 0.01
-            color: "black"
-        }
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: parent.width * 0.02
-            spacing: timetableSettingsRoot.width * 0.02
-
-            Text {
-                id: searchText
-                font.pixelSize: timetableSettingsRoot.width * 0.04
-                color: "grey"
-                text: "Search"
+        delegate: StackViewDelegate {
+            function transitionFinished(properties)
+            {
+                properties.exitItem.opacity = 1
             }
 
-            TextEdit {
-                id: searchTextEdit
-                height: timetableSettingsRoot.width * 0.05
-                font.pixelSize: timetableSettingsRoot.width * 0.04
-                width: parent.width
-                color: focus ? "white" : "grey"
-
-                text: ""
-                onTextChanged: {
-                    Travels.findStations(text, true, searchModel)
+            pushTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: enterItem
+                    easing.type: Easing.InOutCubic
+                    duration: 500
+                    property: "scale"
+                    from: 0.9
+                    to: 1
                 }
-
-                KeyNavigation.down: searchListView
+                PropertyAnimation {
+                    target: enterItem
+                    easing.type: Easing.InOutCubic
+                    duration: 500
+                    property: "opacity"
+                    from: 0.0
+                    to: 1
+                }
+                PropertyAnimation {
+                    target: exitItem
+                    easing.type: Easing.InOutCubic
+                    duration: 250
+                    property: "opacity"
+                    from: 1
+                    to: 0
+                }
             }
 
-            ListView {
-                id: searchListView
-                height: parent.height - searchText.height - searchTextEdit.height - parent.anchors.margins * 5
-                width: parent.width
-
-                model: searchModel
-                clip: true
-
-                delegate: Text {
-                    font.pixelSize: timetableSettingsRoot.width * 0.03
-                    color: activeFocus ? "white" : "grey"
-
-                    text: name
-                    Keys.onPressed: {
-                        if(event.key === Qt.Key_Return)  {
-                            var station = {name: name, stationID: "" + stationID, directions: "all", minTime: 0};
-                            addStation(station);
-                            searchOverlay.done();
-                        }
-                    }
+            popTransition: StackViewTransition {
+                PropertyAnimation {
+                    target: exitItem
+                    easing.type: Easing.InOutCubic
+                    duration: 500
+                    property: "scale"
+                    from: 1
+                    to: 0.9
                 }
-                highlight: Rectangle {
-                    color: searchListView.focus ? "white" : "lightgrey"
-                    width: parent.width
-                    radius: timetableSettingsRoot.width * 0.01
-                    opacity: 0.1
+                PropertyAnimation {
+                    target: exitItem
+                    easing.type: Easing.InOutCubic
+                    duration: 500
+                    property: "opacity"
+                    from: 1
+                    to: 0
                 }
-
-                KeyNavigation.up: searchTextEdit
+                PropertyAnimation {
+                    target: enterItem
+                    easing.type: Easing.InOutCubic
+                    duration: 250
+                    property: "opacity"
+                    from: 0
+                    to: 1
+                }
             }
         }
-
-        Keys.onPressed: {
-            if(event.key === Qt.Key_Escape) {
-                searchOverlay.done()
-                event.accepted = true
-            }
-        }
+        initialItem: currentStops
     }
 }

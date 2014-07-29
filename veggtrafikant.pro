@@ -70,7 +70,8 @@ OTHER_FILES += \
     android/src/org/qtproject/qt5/android/bindings/QtApplication.java \
     android/src/org/kde/necessitas/ministro/IMinistro.aidl \
     android/src/org/kde/necessitas/ministro/IMinistroCallback.aidl \
-    android/AndroidManifest.xml
+    android/AndroidManifest.xml \
+    todo.md
 
 HEADERS += \
     settings.h

@@ -21,21 +21,9 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("Veggtrafikant");
 
     QGuiApplication app(argc, argv);
+    // IMPORTANT: This must match the Android package name for QSettings to work on Android.
     qmlRegisterType<Settings>("org.dragly.veggtrafikant", 1, 0, "SettingsStorage");
 
-    //    QApplication::setGraphicsSystem("opengl");
-
-    //    QVariant stations;
-    //    if(argc > 1) {
-    //        for(int i = 1; i < argc; i++) {
-    //            stations << argv[i];
-    //        }
-    //    } else {
-    //        stations << "3010011";
-    //    }
-    //    qDebug() << stationID;
-
-//    qDebug() << "Starting database";
     QFontDatabase database;
     if(!database.addApplicationFont(":/fonts/ubuntu/Ubuntu-R.ttf")) {
         qWarning() << "Could not load Ubuntu font!";
@@ -45,7 +33,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QPixmap nullCursor(16, 16);
     nullCursor.fill(Qt::transparent);
-    app.setOverrideCursor(QCursor(nullCursor));
+//    app.setOverrideCursor(QCursor(nullCursor));
 
     QtQuick2ApplicationViewer viewer;
     QSurfaceFormat surfaceFormat;
@@ -61,7 +49,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
     //    viewer.rootObject()->setProperty("stations", stationID);
-        viewer.showFullScreen();
-//    viewer.showFullScreen();
+//        viewer.showFullScreen();
+    viewer.showExpanded();
     return app.exec();
 }

@@ -36,64 +36,14 @@ Item {
         var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
         if(stationIDCounter < stations.length) {
             var stationID = stations[stationIDCounter].stationID
-            var directionsString = "" + stations[stationIDCounter].directions
-            var directions = directionsString.split(",")
-            if(!directions || directions[0] === "" || directions[0] === "all") {
-                directions = []
-            }
-
-            var minTime = stations[stationIDCounter].minTime
             var xhr = new XMLHttpRequest;
-            var url = "http://services.epi.trafikanten.no/RealTime/GetRealTimeData/" +  stationID;
+            var url = "http://reisapi.ruter.no/StopVisit/GetDepartures/" +  stationID;
             //            console.log("Requesting " + url)
             xhr.open("GET", url);
+            xhr.station = stations[stationIDCounter]
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if(stationIDCounter == 0) {
-                        realtimeModel.clear();
-                    }
-
-                    var a = JSON.parse(xhr.responseText);
-                    if(!isRealtimeModelCleared) {
-                        realtimeModel.clear();
-                        isRealtimeModelCleared = 1;
-                    }
-
-                    for (var b in a) {
-                        //                        if(counter < nDepartures) {
-                        var o = a[b]
-                        var substrLength = o.ExpectedArrivalTime.indexOf("+")-6
-                        var arrivalTime = Helper.parseDate(o.ExpectedArrivalTime)
-                        var currentTime = Helper.parseDate(o.RecordedAtTime)
-                        var timeDifference = arrivalTime.getTime() - currentTime.getTime()
-                        var timeDifferenceMinutes = timeDifference / 60000
-                        if((directions.length === 0 || directions.indexOf(o.DirectionName) !== -1) && timeDifferenceMinutes > minTime) {
-                            var dataItem = {
-                                lineNumber: o.PublishedLineName,
-                                title: o.PublishedLineName + " " + o.DestinationName,
-                                arrivalTime: arrivalTime,
-                                timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
-                                subtitle: Qt.formatDateTime(arrivalTime, "hh:mm"),
-                                platform: o.DirectionRef,
-                                selected: false
-                            };
-                            realtimeModel.append(dataItem);
-                        }
-                        //                        }
-                        //                        counter++
-                    }
-                    var swapped = true; // let's perform a bubble sort! :D
-                    while(swapped) {
-                        swapped = false;
-                        for(var i = 0; i < realtimeModel.count - 1; i++) {
-                            if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
-                                realtimeModel.move(i,i+1,1);
-                                swapped = true;
-                            }
-                        }
-                    }
-                    stationIDCounter++;
-                    reloadTravelTimes();
+                    parseTravelTimes(xhr.responseText, xhr.station)
                 }
             }
             xhr.send();
@@ -105,6 +55,66 @@ Item {
             }
             realtimeModel.loadCompleted()
         }
+    }
+
+    function parseTravelTimes(json, station) {
+
+        var directionsString = station.directions
+        var directions = directionsString.split(",")
+        if(!directions || directions[0] === "" || directions[0] === "all") {
+            directions = []
+        }
+
+        var minTime = station.minTime
+
+        if(stationIDCounter == 0) {
+            realtimeModel.clear();
+        }
+
+        var a = JSON.parse(json);
+        if(!isRealtimeModelCleared) {
+            realtimeModel.clear();
+            isRealtimeModelCleared = 1;
+        }
+
+        for (var b in a) {
+            //                        if(counter < nDepartures) {
+            var o = a[b]
+            var journey = o.MonitoredVehicleJourney;
+            var monitoredCall = journey.MonitoredCall;
+            var substrLength = monitoredCall.ExpectedArrivalTime.indexOf("+")-6
+            var arrivalTime = Helper.parseDate(monitoredCall.ExpectedArrivalTime)
+            var currentTime = Helper.parseDate(o.RecordedAtTime)
+            var timeDifference = arrivalTime.getTime() - currentTime.getTime()
+            var timeDifferenceMinutes = timeDifference / 60000
+            var identifier = "" + journey.LineRef + journey.DestinationRef
+            if((directions.length === 0 || directions.indexOf(identifier) !== -1) && timeDifferenceMinutes >= minTime) {
+                var dataItem = {
+                    lineNumber: journey.PublishedLineName,
+                    title: journey.PublishedLineName + " " + journey.DestinationName,
+                    arrivalTime: arrivalTime,
+                    timeLeft: timeDifferenceMinutes.toFixed(0) + " min",
+                    subtitle: Qt.formatDateTime(arrivalTime, "hh:mm"),
+                    platform: journey.DirectionRef,
+                    selected: false
+                };
+                realtimeModel.append(dataItem);
+            }
+            //                        }
+            //                        counter++
+        }
+        var swapped = true; // let's perform a bubble sort! :D
+        while(swapped) {
+            swapped = false;
+            for(var i = 0; i < realtimeModel.count - 1; i++) {
+                if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
+                    realtimeModel.move(i,i+1,1);
+                    swapped = true;
+                }
+            }
+        }
+        stationIDCounter++;
+        reloadTravelTimes();
     }
 
     function reloadWeather() {

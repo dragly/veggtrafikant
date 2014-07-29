@@ -14,6 +14,13 @@ Item {
 
     state: "timetable"
 
+    Component.onCompleted: {
+        for(var i = 0; i < topLevelModel.count; i++) {
+            dummyLoader.source = topLevelModel.get(i).contents
+        }
+        dummyLoader.source = ""
+    }
+
     onFocusChanged: {
         if(focus) {
             topLevelView.focus = true
@@ -107,6 +114,12 @@ Item {
                         ColorAnimation { duration: 200 }
                     }
                 }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        topLevelView.currentIndex = index
+                    }
+                }
             }
             highlight: Rectangle {
                 width: topLevelView.width
@@ -167,11 +180,30 @@ Item {
                     event.accepted = true
                 }
             }
+            Keys.onReleased: {
+                if(event.key === Qt.Key_Back) {
+                    topLevelView.focus = true
+                    event.accepted = true
+                }
+            }
         }
+    }
+
+    Loader {
+        id: dummyLoader
+
+        visible: false
+        asynchronous: true
     }
 
     Keys.onPressed: {
         if(event.key === Qt.Key_Escape) {
+            done()
+            event.accepted = true
+        }
+    }
+    Keys.onReleased: {
+        if(event.key === Qt.Key_Back) {
             done()
             event.accepted = true
         }

@@ -37,6 +37,14 @@ Item {
             width: parent.width
             height: parent.width * 0.1 * count
 
+            function runCurrentAction() {
+                if(currentItem.myData.action === "return") {
+                    returnToMainView()
+                } else if(currentItem.myData.action === "exit") {
+                    Qt.quit()
+                }
+            }
+
             delegate: Item {
                 id: delegateItem
                 property variant myData: model
@@ -56,6 +64,14 @@ Item {
                         ColorAnimation { duration: 200 }
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        exitView.currentIndex = index
+                        exitView.runCurrentAction()
+                    }
+                }
             }
 
             highlight: Rectangle {
@@ -66,11 +82,7 @@ Item {
 
             Keys.onPressed: {
                 if(event.key === Qt.Key_Return) {
-                    if(currentItem.myData.action === "return") {
-                        returnToMainView()
-                    } else if(currentItem.myData.action === "exit") {
-                        Qt.quit()
-                    }
+                    runCurrentAction()
                 }
             }
         }

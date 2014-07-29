@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.1
 import org.dragly.veggtrafikant 1.0
 
 Item {
@@ -26,9 +27,12 @@ Item {
         SettingsHeading {
             text: qsTr("Location")
         }
-        SettingsTextEdit {
+        TextField {
             id: locationTextEdit
 
+            height: parent.width * 0.05
+            width: parent.width
+            font.pixelSize: height * 0.5
             onTextChanged: {
                 settingsStorage.setValue("yrLocationString", text)
             }

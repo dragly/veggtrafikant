@@ -7,10 +7,12 @@ Rectangle {
 
     property Style theme: Style {}
 
-    width: 480
-    height: 480
+    width: 800
+    height: 600
     smooth: true
     focus: true
+
+    state: "settings"
 
     Timer {
         id: refreshTheme
@@ -73,6 +75,7 @@ Rectangle {
         }
         if(event.key === Qt.Key_Escape) {
             state = "settings"
+            event.accepted = true
         }
     }
 
@@ -91,12 +94,12 @@ Rectangle {
         height: parent.height
     }
 
-    GaussianBlur {
+    FastBlur {
         id: travelTimesBlur
         anchors.fill: parent
         source: travelTimes
-        radius: parent.width / 48
-        samples: 16
+        radius: parent.width / 12
+//        samples: 8
         enabled: false
         opacity: 0
     }
@@ -180,7 +183,7 @@ Rectangle {
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            state = "settings"
+            root.state = "settings"
         }
     }
 }
