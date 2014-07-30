@@ -3,7 +3,8 @@ folder_01.source = qml/veggtrafikant
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
-QT += opengl
+QT += opengl qml quick
+QT += xmlpatterns xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 greaterThan(QT_MAJOR_VERSION, 4): DEFINES += QT_VERSION_IS_FIVE
 
