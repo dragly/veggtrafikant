@@ -11,12 +11,10 @@ Item {
     property real defaultMargin: UI.MARGIN_XLARGE
     property string stationName
     //    property variant stations: []
-    property int newsId: 0
     property int nDepartures: 6
     property int stationIDCounter: 0;
     property bool isRealtimeModelCleared: false;
     property string yrLocationString: ""
-    property string feedURL: ""
 
     smooth: true
 //    color: "transparent"
@@ -38,27 +36,42 @@ Item {
             var stationID = stations[stationIDCounter].stationID
             var xhr = new XMLHttpRequest;
             var url = "http://reisapi.ruter.no/StopVisit/GetDepartures/" +  stationID;
-            //            console.log("Requesting " + url)
+            console.log("Fetching data for station " + stations[stationIDCounter].name)
             xhr.open("GET", url);
             xhr.station = stations[stationIDCounter]
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
                     parseTravelTimes(xhr.responseText, xhr.station)
+                    stationIDCounter++;
+                    reloadTravelTimes();
                 }
             }
             xhr.send();
         } else {
             stationIDCounter = 0;
 
-            while(realtimeModel.count > nDepartures) {
-                realtimeModel.remove(realtimeModel.count - 1);
+            finalRealtimeModel.clear()
+            for(var i = 0; i < realtimeModel.count; i++) {
+                finalRealtimeModel.append(realtimeModel.get(i))
             }
-            realtimeModel.loadCompleted()
+            realtimeModel.clear()
+            var swapped = true; // let's perform a bubble sort! :D
+            while(swapped) {
+                swapped = false;
+                for(var i = 0; i < finalRealtimeModel.count - 1; i++) {
+                    if(finalRealtimeModel.get(i).arrivalTime > finalRealtimeModel.get(i + 1).arrivalTime) {
+                        finalRealtimeModel.move(i,i+1,1);
+                        swapped = true;
+                    }
+                }
+            }
+            while(finalRealtimeModel.count > nDepartures) {
+                finalRealtimeModel.remove(finalRealtimeModel.count - 1);
+            }
         }
     }
 
     function parseTravelTimes(json, station) {
-
         var directionsString = station.directions
         var directions = directionsString.split(",")
         if(!directions || directions[0] === "" || directions[0] === "all") {
@@ -67,16 +80,7 @@ Item {
 
         var minTime = station.minTime
 
-        if(stationIDCounter == 0) {
-            realtimeModel.clear();
-        }
-
         var a = JSON.parse(json);
-        if(!isRealtimeModelCleared) {
-            realtimeModel.clear();
-            isRealtimeModelCleared = 1;
-        }
-
         for (var b in a) {
             //                        if(counter < nDepartures) {
             var o = a[b]
@@ -87,6 +91,10 @@ Item {
             var currentTime = Helper.parseDate(o.RecordedAtTime)
             var timeDifference = arrivalTime.getTime() - currentTime.getTime()
             var timeDifferenceMinutes = timeDifference / 60000
+            if(timeDifferenceMinutes > 120) {
+                continue;
+            }
+
             var identifier = "" + journey.LineRef + journey.DestinationRef
             if((directions.length === 0 || directions.indexOf(identifier) !== -1) && timeDifferenceMinutes >= minTime) {
                 var dataItem = {
@@ -100,31 +108,17 @@ Item {
                 };
                 realtimeModel.append(dataItem);
             }
-            //                        }
-            //                        counter++
         }
-        var swapped = true; // let's perform a bubble sort! :D
-        while(swapped) {
-            swapped = false;
-            for(var i = 0; i < realtimeModel.count - 1; i++) {
-                if(realtimeModel.get(i).arrivalTime > realtimeModel.get(i + 1).arrivalTime) {
-                    realtimeModel.move(i,i+1,1);
-                    swapped = true;
-                }
-            }
-        }
-        stationIDCounter++;
-        reloadTravelTimes();
     }
 
     function reloadWeather() {
-        yrLocationString = settingsStorage.value("yrLocationString", "Norge/Oslo/Oslo/Oslo")
+        yrLocationString = settingsStorage.value("yrLink", "http://www.yr.no/stad/Noreg/Oslo/Oslo/Oslo/varsel.xml")
         weatherModel.reload()
     }
 
     function reloadFeed() {
-        feedURL = settingsStorage.value("feedURL", "http://www.nrk.no/nyheiter/siste.rss")
-        newsModel.reload()
+        news.feedUrl = settingsStorage.value("feedURL", "http://www.nrk.no/nyheter/siste.rss")
+        news.reload()
     }
 
     SettingsStorage {
@@ -175,46 +169,6 @@ Item {
         }
     }
 
-    Timer {
-        id: switchNews
-        triggeredOnStart: true
-        repeat: true
-        interval: 10 * 1000
-        onTriggered: {
-            if(newsText.anchors.bottomMargin == 0) {
-                newsAnimation.start()
-                interval = 1000
-            } else {
-                if(newsModel.count > 0) {
-                    newsId++
-                    if(newsId >= newsModel.count) {
-                        newsId = 0
-                    }
-                    newsText.text = newsModel.get(newsId).title + ": " + newsModel.get(newsId).description
-                }
-                newsAnimationBack.start()
-                interval = 10 * 1000
-            }
-        }
-    }
-
-    PropertyAnimation {
-        id: newsAnimation
-        target: newsText
-        property: "anchors.bottomMargin"
-        to: -2 * newsText.height
-        easing.type: Easing.InBack
-        duration: 500
-    }
-    PropertyAnimation {
-        id: newsAnimationBack
-        target: newsText
-        property: "anchors.bottomMargin"
-        to: 0
-        easing.type: Easing.OutBack
-        duration: 500
-    }
-
     //    Timer {
     //        id: rollNews
     //        triggeredOnStart: true
@@ -237,8 +191,10 @@ Item {
 
     ListModel {
         id: realtimeModel
+    }
 
-        signal loadCompleted()
+    ListModel {
+        id: finalRealtimeModel
     }
 
     Item {
@@ -287,7 +243,7 @@ Item {
             id: listview
 
             anchors {
-                bottom: newsText.top
+                bottom: news.top
                 top: weatherRow.bottom
                 right: parent.right
                 left: parent.left
@@ -302,19 +258,14 @@ Item {
                 width: parent.width
             }
 
-            model: realtimeModel
+            model: finalRealtimeModel
             delegate: ListDelegate {
                 titleSize: root.height * 0.08
                 subtitleSize: root.height * 0.07
             }
-
         }
-        Text {
-            id: newsText
-            text: "Updating news..."
-            color: theme.travelText
-            height: root.height * 0.18
-            font.pixelSize: root.height * 0.038
+        NewsItem {
+            id: news
             anchors {
                 bottom: parent.bottom
                 left: parent.left
@@ -322,31 +273,13 @@ Item {
                 leftMargin: root.height * 0.01
                 rightMargin: root.height * 0.01
             }
-            wrapMode: Text.WordWrap
-            verticalAlignment: Text.AlignTop
-            clip: true
-        }
-    }
-
-    XmlListModel {
-        id: newsModel
-        source: feedURL
-        query: "/rss/channel/item"
-
-        XmlRole { name: "title"; query: "title/string()" }
-        XmlRole { name: "description"; query: "description/string()" }
-        onStatusChanged: {
-            if(status == XmlListModel.Error) {
-                console.log("News error: " + weatherModel.errorString)
-            } else if(status == XmlListModel.Ready) {
-                switchNews.start()
-            }
+            height: root.height * 0.18
         }
     }
 
     XmlListModel {
         id: weatherModel
-        source: "http://www.yr.no/sted/" + yrLocationString + "/varsel.xml"
+        source: yrLocationString
         query: "/weatherdata/forecast/tabular/time"
 
         XmlRole { name: "symbolNumber"; query: "symbol/@number/string()" }
@@ -354,7 +287,7 @@ Item {
         XmlRole { name: "temperature"; query: "temperature/@value/string()" }
         onStatusChanged: {
             if(status == XmlListModel.Error) {
-                console.log("Yr.no error: " + weatherModel.errorString)
+                console.log("Yr.no error: " + weatherModel.errorString())
                 weatherText.text = "Error"
             }
             if(status == XmlListModel.Ready) {
@@ -367,6 +300,20 @@ Item {
             }
         }
     }
+
+//    XmlListModel {
+//        id: weatherPlacesModel
+//        source: "weather/noreg.txt"
+//        onStatusChanged: {
+//            if(status == XmlListModel.Error) {
+//                console.log("Weather places error: " + weatherPlacesModel.errorString())
+//            }
+//            if(status == XmlListModel.Ready) {
+//                var lines = weatherPlacesModel.xml.split("\n")
+//                console.log(lines[0])
+//            }
+//        }
+//    }
 
 
 }

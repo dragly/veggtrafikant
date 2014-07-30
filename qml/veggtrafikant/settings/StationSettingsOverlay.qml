@@ -6,7 +6,7 @@ Item {
     id: stationSettingsOverlayRoot
 
     property alias minTime: minTimeTextEdit.text
-    property alias directions: directionsTextEdit.text
+//    property alias directions: directionsTextEdit.text
 
     signal done
     signal deleteStation
@@ -22,16 +22,34 @@ Item {
         }
     }
 
-    GridLayout {
+    Column {
         anchors.fill: parent
         anchors.margins: width * 0.02
-        columns: 2
-        columnSpacing: width * 0.02
-        rowSpacing: width * 0.02
+        spacing: width * 0.02
+//        columns: 2
+//        columnSpacing: width * 0.02
+//        rowSpacing: width * 0.02
+
+        SettingsButton {
+            id: doneButton
+            text: qsTr("Save")
+            height: stationSettingsOverlayRoot.width * 0.1
+
+//            KeyNavigation.up: directionsTextEdit
+
+            Keys.onPressed: {
+                if(event.key === Qt.Key_Return) {
+                    stationSettingsOverlayRoot.done()
+                }
+            }
+            onClicked: {
+                stationSettingsOverlayRoot.done()
+            }
+        }
         Text {
-            text: "Min. time:"
+            text: "Minimum time:"
             font.pixelSize: parent.width * 0.05
-            color: focus ? theme.strongFront : theme.duseFront
+            color: theme.strongFront
         }
         TextField {
             id: minTimeTextEdit
@@ -40,31 +58,31 @@ Item {
             Layout.preferredHeight: parent.width * 0.1
             font.pixelSize: height * 0.5
             Layout.fillWidth: true
-            KeyNavigation.down: directionsTextEdit
+//            KeyNavigation.down: directionsTextEdit
         }
-        Text {
-            text: "Directions:"
-            font.pixelSize: parent.width * 0.05
-            color: focus ?  theme.strongFront : theme.duseFront
-        }
-        TextField {
-            id: directionsTextEdit
-            text: "0"
-            inputMethodHints: Qt.ImhDigitsOnly
-            Layout.preferredHeight: parent.width * 0.1
-            font.pixelSize: height * 0.5
-            onTextChanged: {
+//        Text {
+//            text: "Directions:"
+//            font.pixelSize: parent.width * 0.05
+//            color: focus ?  theme.strongFront : theme.duseFront
+//        }
+//        TextField {
+//            id: directionsTextEdit
+//            text: "0"
+//            inputMethodHints: Qt.ImhDigitsOnly
+//            Layout.preferredHeight: parent.width * 0.1
+//            font.pixelSize: height * 0.5
+//            onTextChanged: {
 
-            }
-            Layout.fillWidth: true
-            KeyNavigation.up: minTimeTextEdit
-            KeyNavigation.down: deleteButton
-        }
-        Button {
+//            }
+//            Layout.fillWidth: true
+//            KeyNavigation.up: minTimeTextEdit
+//            KeyNavigation.down: deleteButton
+//        }
+        SettingsButton {
             id: deleteButton
             text: qsTr("Delete")
             Layout.preferredHeight: parent.width * 0.1
-            KeyNavigation.up: directionsTextEdit
+//            KeyNavigation.up: directionsTextEdit
 
             Keys.onPressed: {
                 if(event.key === Qt.Key_Return) {
@@ -79,51 +97,12 @@ Item {
                 }
             }
         }
-        Item {
-            Layout.fillWidth: true
-        }
-
-        Item {
-            Layout.fillHeight: true
-        }
     }
-    Row {
-        anchors {
-            horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
-            margins: parent.width * 0.05
-        }
-        Button {
-            id: doneButton
-            text: qsTr("Done")
-            height: stationSettingsOverlayRoot.width * 0.1
-
-            KeyNavigation.up: directionsTextEdit
-
-            Keys.onPressed: {
-                if(event.key === Qt.Key_Return) {
-                    stationSettingsOverlayRoot.done()
-                }
-            }
-            onClicked: {
-                stationSettingsOverlayRoot.done()
-            }
-        }
-        Button {
-            id: cancelButton
-            text: qsTr("Cancel")
-            height: stationSettingsOverlayRoot.width * 0.1
-
-            KeyNavigation.up: doneButton
-
-            Keys.onPressed: {
-                if(event.key === Qt.Key_Return) {
-                    stationSettingsOverlayRoot.cancel()
-                }
-            }
-            onClicked: {
-                stationSettingsOverlayRoot.cancel()
-            }
-        }
-    }
+//    Row {
+//        anchors {
+//            horizontalCenter: parent.horizontalCenter
+//            bottom: parent.bottom
+//            margins: parent.width * 0.05
+//        }
+//    }
 }

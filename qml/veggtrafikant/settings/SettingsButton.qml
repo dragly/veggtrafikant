@@ -9,8 +9,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         radius: 8
-        color: theme.strongFront
-        opacity: 0.1
+        color: theme.duseBack
     }
     Text {
         id: buttonText

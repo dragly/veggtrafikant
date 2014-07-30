@@ -8,8 +8,6 @@ import ".."
 Item {
     id: timetableSettingsRoot
 
-    property Style theme: Style {}
-
     focus: true
     clip: true
 
@@ -72,16 +70,16 @@ Item {
             if(stationSelectorListView.currentItem) {
                 var currentData = stationSelectorListView.model.get(stationSelectorListView.currentIndex)
                 currentData.minTime = parseInt(minTime)
-                currentData.directions = directions
+//                currentData.directions = directions
                 stationSelectorListView.model.set(stationSelectorListView.currentIndex, currentData)
                 saveStations()
             }
             stackView.pop()
         }
 
-        onCancel: {
-            stackView.pop()
-        }
+//        onCancel: {
+//            stackView.pop()
+//        }
     }
 
     SearchOverlay  {
@@ -90,6 +88,7 @@ Item {
         width: parent.width
         height: parent.height
         onDone: {
+            lineSelector.reset()
             var station = {name: name, stationID: "" + stationID, directions: "all", minTime: 0};
             lineSelector.station = station
             stackView.push(lineSelector)
@@ -136,7 +135,6 @@ Item {
         SettingsHeading {
             id: travelSettingsHeading
             text: qsTr("Stations")
-            font.pixelSize: timetableSettingsRoot.width * 0.05
         }
     }
 
@@ -149,16 +147,35 @@ Item {
             anchors.fill: parent
             spacing: settingsRoot.height * 0.02
 
+            SettingsButton {
+                id: addButton
+                text: "Add"
+
+                function startSearch() {
+                    searchOverlay.visible = true
+                    stackView.push(searchOverlay)
+                }
+
+                Keys.onPressed: {
+                    if(event.key === Qt.Key_Return) {
+                        startSearch()
+                    }
+                }
+                onClicked: {
+                    addButton.startSearch()
+                }
+            }
+
             Item {
                 width: parent.width
                 height: stationSelectorListView.height
 
+                SettingsListViewBackground {
+                    anchors.fill: stationSelectorListView
+                }
+
                 ListView {
                     id: stationSelectorListView
-
-                    SettingsListViewBackground {
-                        anchors.fill: parent
-                    }
 
                     width: parent.width
                     //            height: parent.height - addButton.height * 2
@@ -179,8 +196,7 @@ Item {
                                 right: parent.right
                             }
                             height: 2
-                            color: theme.strongFront
-                            opacity: 0.1
+                            color: theme.duseFront
                             visible: index < stationSelectorListView.model.count - 1
                         }
 
@@ -200,13 +216,13 @@ Item {
                                 ColorAnimation { duration: 200 }
                             }
                         }
-//                        MouseArea {
-//                            anchors.fill: parent
-//                            onClicked: {
-//                                stationSelectorListView.currentIndex = index
-//                                stackView.push(stationSettingsOverlay)
-//                            }
-//                        }
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                stationSelectorListView.currentIndex = index
+                                stackView.push(stationSettingsOverlay)
+                            }
+                        }
                     }
 
                     KeyNavigation.down: addButton
@@ -215,28 +231,9 @@ Item {
                     onCurrentItemChanged: {
                         if(currentIndex >= 0) {
                             stationSettingsOverlay.minTime = currentItem.myData.minTime
-                            stationSettingsOverlay.directions = currentItem.myData.directions
+//                            stationSettingsOverlay.directions = currentItem.myData.directions
                         }
                     }
-                }
-            }
-
-            SettingsButton {
-                id: addButton
-                text: "Add"
-
-                function startSearch() {
-                    searchOverlay.visible = true
-                    stackView.push(searchOverlay)
-                }
-
-                Keys.onPressed: {
-                    if(event.key === Qt.Key_Return) {
-                        startSearch()
-                    }
-                }
-                onClicked: {
-                    addButton.startSearch()
                 }
             }
         }
