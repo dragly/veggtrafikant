@@ -11,7 +11,8 @@
 #include <QGraphicsObject>
 #include <QGLWidget>
 #include <QFontDatabase>
-#include "qtquick2applicationviewer.h"
+//#include "qtquick2applicationviewer.h"
+#include <QtQml/QQmlApplicationEngine>
 //#include "qmlapplicationviewer.h"
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
@@ -19,37 +20,24 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     QCoreApplication::setOrganizationName("Dragly");
     QCoreApplication::setOrganizationDomain("dragly.org");
     QCoreApplication::setApplicationName("Veggtrafikant");
-
-    QGuiApplication app(argc, argv);
+#ifdef Q_OS_ANDROID
+//    QSettings::setPath(QSettings::NativeFormat, QSettings::UserScope, "/sdcard/.config/Dragly/Veggtrafikant.conf");
+#endif
     // IMPORTANT: This must match the Android package name for QSettings to work on Android.
     qmlRegisterType<Settings>("org.dragly.veggtrafikant", 1, 0, "SettingsStorage");
+
+    QGuiApplication app(argc, argv);
+    QQmlApplicationEngine engine(QUrl("qrc:/qml/veggtrafikant/main.qml"));
 
     QFontDatabase database;
     if(!database.addApplicationFont(":/fonts/ubuntu/Ubuntu-R.ttf")) {
         qWarning() << "Could not load Ubuntu font!";
     }
     app.setFont(QFont("Ubuntu"));
-//    qDebug() << "font loaded";
 
-    QPixmap nullCursor(16, 16);
-    nullCursor.fill(Qt::transparent);
+//    QPixmap nullCursor(16, 16);
+//    nullCursor.fill(Qt::transparent);
 //    app.setOverrideCursor(QCursor(nullCursor));
 
-    QtQuick2ApplicationViewer viewer;
-    QSurfaceFormat surfaceFormat;
-    surfaceFormat.setAlphaBufferSize(8);
-    viewer.setClearBeforeRendering(true);
-    viewer.setColor(QColor(Qt::transparent));
-    viewer.setFlags(Qt::FramelessWindowHint);
-    viewer.setFormat(surfaceFormat);
-    //    viewer.setSurfaceType(QSurface::OpenGLSurface);
-    //    QGLWidget* glWidget = new QGLWidget();
-    //    glWidget->setAutoFillBackground(false);
-    //    viewer.setViewport(glWidget);
-    //    viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
-    viewer.setMainQmlFile(QStringLiteral("qml/veggtrafikant/main.qml"));
-    //    viewer.rootObject()->setProperty("stations", stationID);
-//        viewer.showFullScreen();
-    viewer.showExpanded();
     return app.exec();
 }

@@ -1,0 +1,42 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/veggtrafikant/constants.js</file>
+        <file>qml/veggtrafikant/CpuStats.qml</file>
+        <file>qml/veggtrafikant/helpers.js</file>
+        <file>qml/veggtrafikant/ListDelegate.qml</file>
+        <file>qml/veggtrafikant/main.qml</file>
+        <file>qml/veggtrafikant/NewsItem.qml</file>
+        <file>qml/veggtrafikant/Settings.qml</file>
+        <file>qml/veggtrafikant/Style.qml</file>
+        <file>qml/veggtrafikant/travels.js</file>
+        <file>qml/veggtrafikant/TravelTimes.qml</file>
+        <file>qml/veggtrafikant/images/button_default.png</file>
+        <file>qml/veggtrafikant/images/button_pressed.png</file>
+        <file>qml/veggtrafikant/images/edit.svg</file>
+        <file>qml/veggtrafikant/images/edit-white.svg</file>
+        <file>qml/veggtrafikant/images/navigation_next_item.png</file>
+        <file>qml/veggtrafikant/images/navigation_previous_item.png</file>
+        <file>qml/veggtrafikant/images/NOTICE.txt</file>
+        <file>qml/veggtrafikant/images/tab_selected.png</file>
+        <file>qml/veggtrafikant/images/tabs_standard.png</file>
+        <file>qml/veggtrafikant/images/textinput.png</file>
+        <file>qml/veggtrafikant/images/toolbar.png</file>
+        <file>qml/veggtrafikant/settings/About.qml</file>
+        <file>qml/veggtrafikant/settings/ExitSettings.qml</file>
+        <file>qml/veggtrafikant/settings/FeedSettings.qml</file>
+        <file>qml/veggtrafikant/settings/LineModel.qml</file>
+        <file>qml/veggtrafikant/settings/LineSelector.qml</file>
+        <file>qml/veggtrafikant/settings/SearchOverlay.qml</file>
+        <file>qml/veggtrafikant/settings/SettingsButton.qml</file>
+        <file>qml/veggtrafikant/settings/SettingsHeading.qml</file>
+        <file>qml/veggtrafikant/settings/SettingsListView.qml</file>
+        <file>qml/veggtrafikant/settings/SettingsListViewBackground.qml</file>
+        <file>qml/veggtrafikant/settings/SettingsTextEdit.qml</file>
+        <file>qml/veggtrafikant/settings/StationSettingsOverlay.qml</file>
+        <file>qml/veggtrafikant/settings/TravelSettings.qml</file>
+        <file>qml/veggtrafikant/settings/WeatherSettings.qml</file>
+        <file>qml/veggtrafikant/JSONListModel/jsonData.txt</file>
+        <file>qml/veggtrafikant/JSONListModel/JSONListModel.qml</file>
+        <file>qml/veggtrafikant/JSONListModel/jsonpath.js</file>
+    </qresource>
+</RCC>
