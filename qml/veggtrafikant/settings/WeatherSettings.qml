@@ -12,7 +12,7 @@ Item {
 
     Component.onCompleted: {
         currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
-        loadPlaceModel()
+        loadPlaces()
     }
 
     onActiveFocusChanged: {
@@ -21,19 +21,15 @@ Item {
         }
     }
 
-    function loadPlaceModel(searchString) {
+    function loadPlaces() {
         var xhr = new XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if(xhr.readyState === XMLHttpRequest.DONE) {
                 allWeatherPlaceModel.clear()
                 console.log("Splitting lines in file")
                 var lines = xhr.responseText.split("\n")
-                for(var i = 0; i < lines.length; i++) {
-                    if(i === 0) {
-                        continue
-                    }
-
-                    var line = lines[i]
+                for(var i = 0; i < lines.length - 1; i++) {
+                    var line = lines[i + 1]
                     var tabs = line.split("\t")
                     var placeName = tabs[1]
                     if(!placeName || placeName === undefined) {
@@ -44,7 +40,7 @@ Item {
                     var link = tabs[12]
                     var weatherPlace = {placeName: placeName, fylke: fylke, kommune: kommune, link: link}
                     allWeatherPlaceModel.append(weatherPlace)
-                    placeNames.push(placeName.toLowerCase())
+                    placeNames.push("" + i + "," + placeName.toLowerCase() + fylke.toLowerCase() + kommune.toLowerCase())
                 }
                 console.log(allWeatherPlaceModel.count + " places loaded")
             }
@@ -65,11 +61,10 @@ Item {
         }
 
         var resultCount = 0
-        for(var i = 0; i < allWeatherPlaceModel.count && resultCount < 200; i++) {
-            var weatherPlace = allWeatherPlaceModel.get(i)
-            var placeName = weatherPlace.placeName
-            var fylke = weatherPlace.fylke
-            var kommune = weatherPlace.kommune
+        var results = placeNames.filter(function(placeName) {
+            if(resultCount > 200) {
+                return false;
+            }
 
             var found = true
             for(var j = 0; j < lowerCaseSearchTerms.length && found; j++) {
@@ -78,21 +73,18 @@ Item {
                 if(placeName.toLowerCase().indexOf(searchTerm) > -1) {
                     termFound = true
                 }
-                if(fylke.toLowerCase().indexOf(searchTerm) > -1) {
-                    termFound = true
-                }
-                if(kommune.toLowerCase().indexOf(searchTerm) > -1) {
-                    termFound = true
-                }
                 if(!termFound) {
                     found = false
                 }
             }
-            if(!found) {
-                continue
+            if(found) {
+                resultCount += 1
             }
-
-            resultCount += 1
+            return found
+        })
+        for(var i = 0; i < results.length; i++) {
+            var index = parseInt(results[i].split(",")[0])
+            var weatherPlace = allWeatherPlaceModel.get(index)
             weatherPlaceModel.append(weatherPlace)
         }
     }
@@ -126,12 +118,12 @@ Item {
         TextField {
             id: locationTextEdit
 
-            height: parent.width * 0.05
+            inputMethodHints: Qt.ImhNoPredictiveText
             width: parent.width
             Layout.fillWidth: true
-            font.pixelSize: height * 0.5
+            font.pixelSize: weatherSettingsRoot.width * 0.04
             placeholderText: "Search..."
-            onCursorPositionChanged: focus=true
+
             onTextChanged: {
                 filterPlaces(locationTextEdit.text)
             }
@@ -139,6 +131,7 @@ Item {
         Item {
             width: weatherSettingsRoot.width
             Layout.fillHeight: true
+            Layout.fillWidth: true
             SettingsListViewBackground {
                 anchors.fill: weatherPlaceListView
             }
@@ -154,8 +147,8 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
                 delegate: Item {
                     id: delegateItem
-                    width: weatherSettingsRoot.width
-                    height: weatherSettingsRoot.width * 0.1
+                    width: weatherPlaceListView.width
+                    height: weatherPlaceListView.width * 0.1
 
                     Rectangle {
                         id: lineRect
@@ -195,6 +188,8 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
+                            Qt.inputMethod.hide()
+                            weatherPlaceListView.forceActiveFocus()
                             settingsStorage.setValue("yrLink", model.link)
                             settingsStorage.setValue("yrPlaceName", model.placeName + ", " + model.kommune + ", " + model.fylke)
                             currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
@@ -204,8 +199,8 @@ Item {
                     }
                 }
                 highlight: Rectangle {
-                    width: weatherSettingsRoot.width
-                    height: weatherSettingsRoot.width * 0.1
+                    width: weatherPlaceListView.width
+                    height: weatherPlaceListView.width * 0.1
                     opacity: weatherPlaceListView.showHighlight ? 0.1 : 0.0
                     color: "white"
                 }

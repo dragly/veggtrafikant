@@ -230,7 +230,7 @@ Item {
             }
             Image {
                 id: weatherImage
-                source: "qrc:images/yr/1.png"
+                source: "images/yr/1.png"
 
                 anchors.right: weatherText.left
                 anchors.rightMargin: root.height * 0.03
@@ -293,7 +293,7 @@ Item {
             if(status == XmlListModel.Ready) {
                 if(weatherModel.get(0)) {
                     weatherText.text = weatherModel.get(0).temperature + "°C"
-                    weatherImage.source = "qrc:images/yr/" + weatherModel.get(0).symbolNumber + ".png"
+                    weatherImage.source = "images/yr/" + weatherModel.get(0).symbolNumber + ".png"
                 } else {
                     weatherText.text = "Error"
                 }

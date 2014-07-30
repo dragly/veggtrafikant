@@ -118,6 +118,7 @@ Item {
                     anchors.fill: parent
                     onClicked: {
                         topLevelView.currentIndex = index
+                        Qt.inputMethod.hide();
                     }
                 }
             }

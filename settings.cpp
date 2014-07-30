@@ -1,8 +1,10 @@
 #include "settings.h"
+#include <QDebug>
 
 Settings::Settings(QObject *parent) :
     QSettings(parent)
 {
+    qDebug() << "Settings are stored to " << fileName();
 }
 
 QVariant Settings::value(const QString &key, const QVariant &defaultValue)

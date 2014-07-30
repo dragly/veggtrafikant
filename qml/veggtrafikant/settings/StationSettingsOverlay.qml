@@ -12,15 +12,19 @@ Item {
     signal deleteStation
     signal cancel
 
+    onDeleteStation: {
+        Qt.inputMethod.hide()
+    }
+    onDone: {
+        Qt.inputMethod.hide()
+    }
+    onCancel: {
+        Qt.inputMethod.hide()
+    }
+
     width: parent.width * 0.8
     height: parent.height * 0.4
     anchors.centerIn: parent
-
-    onFocusChanged: {
-        if(focus) {
-            minTimeTextEdit.focus = true
-        }
-    }
 
     Column {
         anchors.fill: parent

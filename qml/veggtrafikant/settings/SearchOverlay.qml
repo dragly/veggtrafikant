@@ -47,11 +47,10 @@ Item {
 
             TextField {
                 id: searchTextEdit
-                height: searchOverlayRoot.width * 0.08
                 font.pixelSize: searchOverlayRoot.width * 0.04
                 width: parent.width
-
-                text: ""
+                inputMethodHints: Qt.ImhNoPredictiveText
+                placeholderText: "Search..."
                 onTextChanged: {
                     searchModel.searchString = text
                     //                Travels.findStations(text, true, searchModel)
@@ -119,6 +118,7 @@ Item {
                         MouseArea {
                             anchors.fill: parent
                             onClicked: {
+                                Qt.inputMethod.hide()
                                 searchOverlayRoot.done(model.Name, model.ID);
                             }
                         }

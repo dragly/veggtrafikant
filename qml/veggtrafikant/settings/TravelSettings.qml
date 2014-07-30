@@ -8,7 +8,6 @@ import ".."
 Item {
     id: timetableSettingsRoot
 
-    focus: true
     clip: true
 
     Component.onCompleted: {
@@ -38,12 +37,6 @@ Item {
         saveStations()
     }
 
-    onActiveFocusChanged: {
-        if(activeFocus) {
-            stationSelectorListView.focus = true
-        }
-    }
-
     ListModel {
         id: stationsModel
     }
@@ -61,7 +54,6 @@ Item {
 
         onDeleteStation: {
             stationSelectorListView.model.remove(stationSelectorListView.currentIndex)
-            timetableSettingsRoot.focus = true
             saveStations()
             stackView.pop()
         }
@@ -103,7 +95,6 @@ Item {
         onDone: {
             stackView.pop(currentStops)
             timetableSettingsRoot.addStation(station);
-            timetableSettingsRoot.focus = true
         }
     }
 
@@ -248,7 +239,6 @@ Item {
             right: parent.right
             bottom: parent.bottom
         }
-        focus: true
         Keys.onReleased: {
             if (event.key === Qt.Key_Back && stackView.depth > 1) {
                 stackView.pop();

@@ -31,7 +31,7 @@ Item {
         }
         TextField {
             id: feedTextEdit
-
+            inputMethodHints: Qt.ImhNoPredictiveText
             height: parent.width * 0.05
             width: parent.width
             font.pixelSize: height * 0.5
