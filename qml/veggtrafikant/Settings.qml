@@ -37,10 +37,10 @@ Item {
             name: "Stations"
             contents: "settings/TravelSettings.qml"
         }
-        ListElement {
-            name: "News feed"
-            contents: "settings/FeedSettings.qml"
-        }
+//        ListElement {
+//            name: "News feed"
+//            contents: "settings/FeedSettings.qml"
+//        }
         ListElement {
             name: "About"
             contents: "settings/About.qml"

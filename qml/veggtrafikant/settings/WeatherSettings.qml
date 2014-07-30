@@ -1,14 +1,18 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
 import org.dragly.veggtrafikant 1.0
 
 Item {
     id: weatherSettingsRoot
 
+    property var placeNames: []
+
     focus: true
 
     Component.onCompleted: {
-        locationTextEdit.text = settingsStorage.value("yrLocationString", "Norge/Oslo/Oslo/Oslo")
+        currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
+        loadPlaceModel()
     }
 
     onActiveFocusChanged: {
@@ -17,30 +21,196 @@ Item {
         }
     }
 
+    function loadPlaceModel(searchString) {
+        var xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function() {
+            if(xhr.readyState === XMLHttpRequest.DONE) {
+                allWeatherPlaceModel.clear()
+                console.log("Splitting lines in file")
+                var lines = xhr.responseText.split("\n")
+                for(var i = 0; i < lines.length; i++) {
+                    if(i === 0) {
+                        continue
+                    }
+
+                    var line = lines[i]
+                    var tabs = line.split("\t")
+                    var placeName = tabs[1]
+                    if(!placeName || placeName === undefined) {
+                        continue
+                    }
+                    var kommune = tabs[6]
+                    var fylke = tabs[7]
+                    var link = tabs[12]
+                    var weatherPlace = {placeName: placeName, fylke: fylke, kommune: kommune, link: link}
+                    allWeatherPlaceModel.append(weatherPlace)
+                    placeNames.push(placeName.toLowerCase())
+                }
+                console.log(allWeatherPlaceModel.count + " places loaded")
+            }
+        }
+        xhr.open("GET", "../weather/noreg.txt")
+        xhr.send()
+    }
+
+    function filterPlaces(searchString) {
+        weatherPlaceListView.showHighlight = false
+        weatherPlaceModel.clear()
+        searchString = searchString.replace(/[,;\.]/g, "")
+        var searchTerms = searchString.split(" ")
+        var lowerCaseSearchTerms = []
+        for(var i = 0; i < searchTerms.length; i++) {
+            var searchTerm = searchTerms[i].toLowerCase()
+            lowerCaseSearchTerms.push(searchTerm)
+        }
+
+        var resultCount = 0
+        for(var i = 0; i < allWeatherPlaceModel.count && resultCount < 200; i++) {
+            var weatherPlace = allWeatherPlaceModel.get(i)
+            var placeName = weatherPlace.placeName
+            var fylke = weatherPlace.fylke
+            var kommune = weatherPlace.kommune
+
+            var found = true
+            for(var j = 0; j < lowerCaseSearchTerms.length && found; j++) {
+                var termFound = false
+                var searchTerm = lowerCaseSearchTerms[j]
+                if(placeName.toLowerCase().indexOf(searchTerm) > -1) {
+                    termFound = true
+                }
+                if(fylke.toLowerCase().indexOf(searchTerm) > -1) {
+                    termFound = true
+                }
+                if(kommune.toLowerCase().indexOf(searchTerm) > -1) {
+                    termFound = true
+                }
+                if(!termFound) {
+                    found = false
+                }
+            }
+            if(!found) {
+                continue
+            }
+
+            resultCount += 1
+            weatherPlaceModel.append(weatherPlace)
+        }
+    }
+
     SettingsStorage {
         id: settingsStorage
     }
 
-    Column {
+    ListModel {
+        id: allWeatherPlaceModel
+    }
+
+    ListModel {
+        id: weatherPlaceModel
+    }
+
+    ColumnLayout {
+        id: contentColumn
         anchors.fill: parent
-        spacing: settingsRoot.height * 0.02
+        anchors.margins: weatherSettingsRoot.width * 0.05
+        spacing: weatherSettingsRoot.width * 0.05
         SettingsHeading {
-            text: qsTr("Location")
+            text: qsTr("Weather location")
+        }
+        Text {
+            id: currentLocationText
+            text: ""
+            font.pixelSize: parent.width * 0.04
+            color: theme.duseFront
         }
         TextField {
             id: locationTextEdit
 
             height: parent.width * 0.05
             width: parent.width
+            Layout.fillWidth: true
             font.pixelSize: height * 0.5
+            placeholderText: "Search..."
+            onCursorPositionChanged: focus=true
             onTextChanged: {
-                settingsStorage.setValue("yrLocationString", text)
+                filterPlaces(locationTextEdit.text)
             }
         }
-        Text {
-            text: qsTr("See http://om.yr.no/verdata/xml/ for more information.")
-            font.pixelSize: parent.width * 0.03
-            color: theme.duseFront
+        Item {
+            width: weatherSettingsRoot.width
+            Layout.fillHeight: true
+            SettingsListViewBackground {
+                anchors.fill: weatherPlaceListView
+            }
+
+            ListView {
+                id: weatherPlaceListView
+                property bool showHighlight
+                clip: true
+                cacheBuffer: 100
+                model: weatherPlaceModel
+                anchors.fill: parent
+                contentHeight: weatherSettingsRoot.width * 0.1 * count
+                boundsBehavior: Flickable.StopAtBounds
+                delegate: Item {
+                    id: delegateItem
+                    width: weatherSettingsRoot.width
+                    height: weatherSettingsRoot.width * 0.1
+
+                    Rectangle {
+                        id: lineRect
+                        anchors {
+                            bottom: parent.bottom
+                            left: placeText.left
+                            right: parent.right
+                        }
+                        height: 2
+                        color: theme.middle
+                        visible: index < weatherPlaceListView.model.count - 1
+                    }
+                    Text {
+                        id: placeText
+                        anchors {
+                            left: parent.left
+                            leftMargin: parent.width * 0.05
+                            verticalCenter: parent.verticalCenter
+                        }
+                        text: model.placeName
+                        font.pixelSize: delegateItem.height * 0.4
+                        color: theme.strongFront
+                        font.weight: Font.Light
+                    }
+                    Text {
+                        id: placeFylkeText
+                        anchors {
+                            rightMargin: parent.width * 0.05
+                            right: parent.right
+                            verticalCenter: parent.verticalCenter
+                        }
+                        text: model.kommune + ", " + model.fylke
+                        font.pixelSize: delegateItem.height * 0.3
+                        color: theme.duseFront
+                        font.weight: Font.Light
+                    }
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            settingsStorage.setValue("yrLink", model.link)
+                            settingsStorage.setValue("yrPlaceName", model.placeName + ", " + model.kommune + ", " + model.fylke)
+                            currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
+                            weatherPlaceListView.currentIndex = index
+                            weatherPlaceListView.showHighlight = true
+                        }
+                    }
+                }
+                highlight: Rectangle {
+                    width: weatherSettingsRoot.width
+                    height: weatherSettingsRoot.width * 0.1
+                    opacity: weatherPlaceListView.showHighlight ? 0.1 : 0.0
+                    color: "white"
+                }
+            }
         }
     }
 }
+

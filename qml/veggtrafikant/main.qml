@@ -12,7 +12,7 @@ Rectangle {
     smooth: true
     focus: true
 
-    state: "settings"
+    state: ""
 
     Timer {
         id: refreshTheme
@@ -43,11 +43,11 @@ Rectangle {
         text: "#002334"
         travelText: "#E6F7FF"
 
-        duseBack: "#84D7FF"
-        strongBack: "#E6F7FF"
-        middle: "#0578AF"
-        duseFront: "#2D4A57"
-        strongFront: "#002334"
+        strongBack: "#08306b"
+        duseBack: "#2171b5"
+        middle: "#6baed6"
+        duseFront: "#c6dbef"
+        strongFront: "#f7fbff"
     }
 
     Style {
@@ -55,18 +55,17 @@ Rectangle {
         text: "#0000FF"
 
         background: Gradient {
-            GradientStop{ position: 0.0; color: "#002334" }
-            GradientStop{ position: 0.8; color: "#002334" }
-            GradientStop{ position: 0.9; color: "#2D4A57" }
-            GradientStop{ position: 1.0; color: "#FFC480" }
+            GradientStop{ position: 0.75; color: "#023858" }
+            GradientStop{ position: 0.95; color: "#045a8d" }
+            GradientStop{ position: 1.0; color: "#0570b0" }
         }
         travelText: "#E6F7FF"
 
-        duseBack: "#2D4A57"
-        strongBack: "#002334"
-        middle: "#0578AF"
-        duseFront: "#84D7FF"
-        strongFront: "#E6F7FF"
+        duseBack: "#045a8d"
+        strongBack: "#023858"
+        middle: "#74a9cf"
+        duseFront: "#ece7f2"
+        strongFront: "#fff7fb"
     }
 
     Keys.onPressed: {
