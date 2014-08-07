@@ -14,6 +14,8 @@ Item {
 
     state: "timetable"
 
+    focus: true
+
     Component.onCompleted: {
         for(var i = 0; i < topLevelModel.count; i++) {
             dummyLoader.source = topLevelModel.get(i).contents
@@ -30,12 +32,12 @@ Item {
     ListModel {
         id: topLevelModel
         ListElement {
-            name: "Weather"
-            contents: "settings/WeatherSettings.qml"
+            name: "Travel"
+            contents: "settings/TravelSettings.qml"
         }
         ListElement {
-            name: "Stations"
-            contents: "settings/TravelSettings.qml"
+            name: "Weather"
+            contents: "settings/WeatherSettings.qml"
         }
 //        ListElement {
 //            name: "News feed"
@@ -199,6 +201,10 @@ Item {
 
     Keys.onPressed: {
         if(event.key === Qt.Key_Escape) {
+            done()
+            event.accepted = true
+        }
+        if (event.key === Qt.Key_Back) {
             done()
             event.accepted = true
         }

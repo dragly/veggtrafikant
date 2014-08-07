@@ -12,7 +12,7 @@ Item {
     property string stationName
     //    property variant stations: []
     property int nDepartures: 6
-    property int stationIDCounter: 0;
+    property int currentStationID: 0;
     property bool isRealtimeModelCleared: false;
     property string yrLocationString: ""
 
@@ -26,29 +26,38 @@ Item {
     }
 
     function reloadTravelTimes() {
+        currentStationID =  0
+        loadTravelTimesForNextStation()
+    }
+
+    function loadTravelTimesForNextStation() {
         var stations = settingsStorage.value("stations")
         if(!stations) {
             return;
         }
 
         var colorList = ["rgb(255,255,150)", "rgb(255,180,150)", "rgb(255,255,255)"]
-        if(stationIDCounter < stations.length) {
-            var stationID = stations[stationIDCounter].stationID
+        if(currentStationID < stations.length) {
+            var stationID = stations[currentStationID].stationID
             var xhr = new XMLHttpRequest;
             var url = "http://reisapi.ruter.no/StopVisit/GetDepartures/" +  stationID;
-            console.log("Fetching data for station " + stations[stationIDCounter].name)
+            console.log("Fetching data for station " + stations[currentStationID].name)
             xhr.open("GET", url);
-            xhr.station = stations[stationIDCounter]
+            xhr.stationIDCounter = currentStationID
+            xhr.station = stations[currentStationID]
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if(currentStationID !== xhr.stationIDCounter) {
+                        return
+                    }
                     parseTravelTimes(xhr.responseText, xhr.station)
-                    stationIDCounter++;
-                    reloadTravelTimes();
+                    currentStationID += 1
+                    loadTravelTimesForNextStation()
                 }
             }
             xhr.send();
         } else {
-            stationIDCounter = 0;
+            currentStationID = 0;
 
             finalRealtimeModel.clear()
             for(var i = 0; i < realtimeModel.count; i++) {
@@ -130,7 +139,7 @@ Item {
         triggeredOnStart: true
         repeat: true
         running: true
-        interval: 30000
+        interval: 60 * 1000
         onTriggered: {
             reloadTravelTimes()
         }
