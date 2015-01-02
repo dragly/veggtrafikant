@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 
 Rectangle {
     id: root
@@ -51,7 +51,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 16
         clip: true
-        focus: true
+//        focus: true
         model: cpuModel
         delegate: Item {
             width: view.width

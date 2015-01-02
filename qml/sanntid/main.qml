@@ -1,11 +1,11 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.2
+import QtQuick 2.3
+import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
-import org.dragly.veggtrafikant 1.0
+import org.dragly.sanntid 1.0
 
 ApplicationWindow {
 
-    property Style theme: Style {}
+    property Style theme: dayTheme
 
     width: 800
     height: 600
@@ -17,7 +17,7 @@ ApplicationWindow {
         anchors.fill: parent
 
         smooth: true
-        focus: true
+//        focus: true
 
         state: ""
 
@@ -40,9 +40,9 @@ ApplicationWindow {
         Style {
             id: dayTheme
             background: Gradient {
-                GradientStop{ position: 0.0; color: "#71CBF6" }
-                GradientStop{ position: 0.2; color: "#71CBF6" }
-                GradientStop{ position: 0.8; color: "#0578AF" }
+                GradientStop{ position: 0.0; color: "#2171b5" }
+                GradientStop{ position: 0.2; color: "#2171b5" }
+                GradientStop{ position: 0.8; color: "#08519c" }
             }
             highlight: "#84D7FF"
             headings: "#0578AF"
@@ -118,7 +118,7 @@ ApplicationWindow {
             z: 999
             onDone: {
                 root.state = ""
-                root.focus = true
+//                root.focus = true
                 travelTimes.refresh()
             }
         }
@@ -130,7 +130,7 @@ ApplicationWindow {
                     target: settings
                     enabled: true
                     opacity: 1
-                    focus: true
+//                    focus: true
                 }
                 PropertyChanges {
                     target: travelTimesBlur

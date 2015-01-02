@@ -1,5 +1,5 @@
-import QtQuick 2.0
-import QtQuick.Controls 1.2
+import QtQuick 2.3
+import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import QtQuick.XmlListModel 2.0
 import "../JSONListModel"
@@ -11,11 +11,11 @@ Item {
     signal done(string name, string stationID)
     signal canceled()
 
-    onFocusChanged: {
-        if(focus) {
-            searchTextEdit.focus = true
-        }
-    }
+//    onFocusChanged: {
+//        if(focus) {
+//            searchTextEdit.focus = true
+//        }
+//    }
 
     //    ListModel {
     //        id: searchModel
@@ -60,6 +60,11 @@ Item {
             onCursorPositionChanged: {
                 searchModel.searchString = text
                 //                Travels.findStations(text, true, searchModel)
+            }
+            onActiveFocusChanged: {
+                if(!activeFocus) {
+                    Qt.inputMethod.hide()
+                }
             }
 
             KeyNavigation.down: searchListView
@@ -121,7 +126,7 @@ Item {
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
-                            Qt.inputMethod.hide()
+                            searchTextEdit.focus = false
                             searchOverlayRoot.done(model.Name, model.ID);
                         }
                     }

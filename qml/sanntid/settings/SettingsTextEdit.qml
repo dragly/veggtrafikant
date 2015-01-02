@@ -1,13 +1,13 @@
-import QtQuick 2.0
+import QtQuick 2.3
 
 Item {
     property alias text: textEdit.text
 
-    onActiveFocusChanged: {
-        if(activeFocus) {
-            textEdit.focus = true
-        }
-    }
+//    onActiveFocusChanged: {
+//        if(activeFocus) {
+//            textEdit.focus = true
+//        }
+//    }
 
     height: parent.width * 0.05
     width: parent.width

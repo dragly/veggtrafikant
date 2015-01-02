@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 
 // TODO: Selection of locations for Ruter
 // TODO: Selection of times for locations for Ruter
@@ -14,7 +14,7 @@ Item {
 
     state: "timetable"
 
-    focus: true
+//    focus: true
 
     Component.onCompleted: {
         for(var i = 0; i < topLevelModel.count; i++) {
@@ -23,11 +23,11 @@ Item {
         dummyLoader.source = ""
     }
 
-    onFocusChanged: {
-        if(focus) {
-            topLevelView.focus = true
-        }
-    }
+//    onFocusChanged: {
+//        if(focus) {
+//            topLevelView.focus = true
+//        }
+//    }
 
     ListModel {
         id: topLevelModel
@@ -131,9 +131,9 @@ Item {
             }
 
             Keys.onPressed: {
-                if(event.key === Qt.Key_Return) {
-                    settingsView.focus = true
-                }
+//                if(event.key === Qt.Key_Return) {
+//                    settingsView.focus = true
+//                }
             }
         }
     }
@@ -142,7 +142,7 @@ Item {
         target: settingsView.item
         ignoreUnknownSignals: true
         onDone: {
-            topLevelView.focus = true
+//            topLevelView.focus = true
         }
         onReturnToMainView: {
             done()
@@ -179,13 +179,13 @@ Item {
 
             Keys.onPressed: {
                 if(event.key === Qt.Key_Escape) {
-                    topLevelView.focus = true
+//                    topLevelView.focus = true
                     event.accepted = true
                 }
             }
             Keys.onReleased: {
                 if(event.key === Qt.Key_Back) {
-                    topLevelView.focus = true
+//                    topLevelView.focus = true
                     event.accepted = true
                 }
             }

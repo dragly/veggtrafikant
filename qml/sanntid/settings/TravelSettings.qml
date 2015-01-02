@@ -1,7 +1,7 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
-import org.dragly.veggtrafikant 1.0
+import org.dragly.sanntid 1.0
 import "../travels.js" as Travels
 import ".."
 
@@ -94,7 +94,7 @@ Item {
         height: parent.height
         onDone: {
             stackView.pop(currentStops)
-            timetableSettingsRoot.addStation(station);
+            timetableSettingsRoot.addStation(station)
         }
     }
 

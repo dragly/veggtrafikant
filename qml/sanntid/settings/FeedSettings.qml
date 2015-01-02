@@ -1,23 +1,23 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.Controls 1.1
-import org.dragly.veggtrafikant 1.0
+import org.dragly.rutetid 1.0
 
 Item {
     id: feedSettingsRoot
 
     signal done()
 
-    focus: true
+//    focus: true
 
     Component.onCompleted: {
         feedTextEdit.text = settingsStorage.value("feedURL", "http://www.nrk.no/nyheiter/siste.rss")
     }
 
-    onActiveFocusChanged: {
-        if(activeFocus) {
-            feedTextEdit.focus = true
-        }
-    }
+//    onActiveFocusChanged: {
+//        if(activeFocus) {
+//            feedTextEdit.focus = true
+//        }
+//    }
 
     SettingsStorage {
         id: settingsStorage

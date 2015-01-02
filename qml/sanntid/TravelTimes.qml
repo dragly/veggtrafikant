@@ -1,7 +1,7 @@
 // import QtQuick 1.0 // to target S60 5th Edition or Maemo 5
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.XmlListModel 2.0
-import org.dragly.veggtrafikant 1.0
+import org.dragly.sanntid 1.0
 import "constants.js" as UI
 import "helpers.js" as Helper
 

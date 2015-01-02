@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 
 Item {
     id: exitSettings
@@ -19,7 +19,7 @@ Item {
             }
         }
         SettingsButton {
-            text: "Exit Veggtrafikant"
+            text: "Exit Sanntid"
             onClicked: {
                 Qt.quit()
             }

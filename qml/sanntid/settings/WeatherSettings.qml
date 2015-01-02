@@ -1,25 +1,25 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
-import org.dragly.veggtrafikant 1.0
+import org.dragly.sanntid 1.0
 
 Item {
     id: weatherSettingsRoot
 
     property var placeNames: []
 
-    focus: true
+//    focus: true
 
     Component.onCompleted: {
         currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
         loadPlaces()
     }
 
-    onActiveFocusChanged: {
-        if(activeFocus) {
-            locationTextEdit.focus = true
-        }
-    }
+//    onActiveFocusChanged: {
+//        if(activeFocus) {
+//            locationTextEdit.focus = true
+//        }
+//    }
 
     function loadPlaces() {
         var xhr = new XMLHttpRequest()
@@ -52,6 +52,10 @@ Item {
     function filterPlaces(searchString) {
         weatherPlaceListView.showHighlight = false
         weatherPlaceModel.clear()
+        if(searchString.length < 1) {
+            return
+        }
+
         searchString = searchString.replace(/[,;\.]/g, "")
         var searchTerms = searchString.split(" ")
         var lowerCaseSearchTerms = []
@@ -189,12 +193,13 @@ Item {
                         anchors.fill: parent
                         onClicked: {
                             Qt.inputMethod.hide()
-                            weatherPlaceListView.forceActiveFocus()
                             settingsStorage.setValue("yrLink", model.link)
                             settingsStorage.setValue("yrPlaceName", model.placeName + ", " + model.kommune + ", " + model.fylke)
                             currentLocationText.text = settingsStorage.value("yrPlaceName", "Oslo")
                             weatherPlaceListView.currentIndex = index
                             weatherPlaceListView.showHighlight = true
+                            locationTextEdit.text = ""
+                            locationTextEdit.focus = false
                         }
                     }
                 }

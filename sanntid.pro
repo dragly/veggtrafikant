@@ -1,11 +1,6 @@
-# Add more folders to ship with the application, here
-folder_01.source = qml/veggtrafikant
-folder_01.target = qml
-DEPLOYMENTFOLDERS = folder_01
-
 QT += opengl qml quick
 QT += xmlpatterns xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 greaterThan(QT_MAJOR_VERSION, 4): DEFINES += QT_VERSION_IS_FIVE
 
 # Additional import path used to resolve QML modules in Creator's code model
@@ -28,6 +23,12 @@ OTHER_FILES += \
 
 HEADERS += \
     settings.h
+
+android {
+    TARGET = Sanntid
+} else {
+    TARGET = sanntid
+}
 
 ## Please do not modify the following two lines. Required for deployment.
 #include(qtquick2applicationviewer/qtquick2applicationviewer.pri)

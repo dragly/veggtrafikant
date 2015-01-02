@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.3
 import QtQuick.XmlListModel 2.0
 
 Item {
@@ -13,7 +13,7 @@ Item {
         id: switchNews
         triggeredOnStart: true
         repeat: true
-        interval: 10 * 1000
+        interval: 20 * 1000
         onTriggered: {
             if(newsText.opacity === 1.0) {
                 newsAnimation.start()

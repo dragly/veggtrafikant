@@ -19,15 +19,15 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("Dragly");
     QCoreApplication::setOrganizationDomain("dragly.org");
-    QCoreApplication::setApplicationName("Veggtrafikant");
+    QCoreApplication::setApplicationName("Sanntid");
 #ifdef Q_OS_ANDROID
-//    QSettings::setPath(QSettings::NativeFormat, QSettings::UserScope, "/sdcard/.config/Dragly/Veggtrafikant.conf");
+//    QSettings::setPath(QSettings::NativeFormat, QSettings::UserScope, "/sdcard/.config/Dragly/Sanntid.conf");
 #endif
     // IMPORTANT: This must match the Android package name for QSettings to work on Android.
-    qmlRegisterType<Settings>("org.dragly.veggtrafikant", 1, 0, "SettingsStorage");
+    qmlRegisterType<Settings>("org.dragly.sanntid", 1, 0, "SettingsStorage");
 
     QGuiApplication app(argc, argv);
-    QQmlApplicationEngine engine(QUrl("qrc:/qml/veggtrafikant/main.qml"));
+    QQmlApplicationEngine engine(QUrl("qrc:/qml/sanntid/main.qml"));
 
     QFontDatabase database;
     if(!database.addApplicationFont(":/fonts/ubuntu/Ubuntu-R.ttf")) {
