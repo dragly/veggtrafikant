@@ -1,19 +1,10 @@
 #include <settings.h>
 
-#ifdef QT_VERSION_IS_FIVE
 #include <QtGui/QGuiApplication>
 #include <QQuickItem>
-#else
-#include <QtGui/QApplication>
-#endif
-#include <QDebug>
-//#include <QDeclarativeContext>
-#include <QGraphicsObject>
-#include <QGLWidget>
 #include <QFontDatabase>
 #include <QTranslator>
 #include <QLibraryInfo>
-#include <QString>
 //#include "qtquick2applicationviewer.h"
 #include <QtQml/QQmlApplicationEngine>
 //#include "qmlapplicationviewer.h"
