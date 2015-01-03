@@ -1,6 +1,6 @@
 import QtQuick 2.3
 import QtQuick.Controls 1.1
-import org.dragly.rutetid 1.0
+import org.dragly.sanntid 1.0
 
 Item {
     id: feedSettingsRoot

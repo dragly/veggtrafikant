@@ -1,7 +1,7 @@
-QT += opengl qml quick
-QT += xmlpatterns xml
+TEMPLATE = app
 
-greaterThan(QT_MAJOR_VERSION, 4): DEFINES += QT_VERSION_IS_FIVE
+QT += qml quick widgets
+QT += xmlpatterns xml
 
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
@@ -15,20 +15,18 @@ RESOURCES += \
     qml.qrc \
     translations.qrc
 
-TARGET = rutetid
+TARGET = sanntid
 
 OTHER_FILES += \
     android/AndroidManifest.xml \
     todo.md \
-    android/src/org/dragly/rutetid/AlwaysOnActivity.java
+    android/src/org/dragly/sanntid/AlwaysOnActivity.java
 
 HEADERS += \
     settings.h
 
 android {
     TARGET = Sanntid
-} else {
-    TARGET = sanntid
 }
 
 TRANSLATIONS = sanntid_nb_NO.ts
