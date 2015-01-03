@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>sanntid_nb_NO.qm</file>
+    </qresource>
+</RCC>

@@ -14,7 +14,7 @@ Item {
     Text {
         id: buttonText
         anchors.centerIn: parent
-        text: "Add"
+        text: qsTr("Add")
         font.pixelSize: parent.height * 0.4
         font.weight: Font.Light
         color: theme.strongFront

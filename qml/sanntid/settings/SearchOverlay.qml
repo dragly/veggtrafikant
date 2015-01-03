@@ -44,7 +44,7 @@ Item {
             font.pixelSize: searchOverlayRoot.width * 0.05
             color: theme.duseFront
             font.weight: Font.Light
-            text: "Search"
+            text: qsTr("Search")
         }
 
         TextField {
@@ -52,7 +52,7 @@ Item {
             font.pixelSize: searchOverlayRoot.width * 0.04
             Layout.fillWidth: true
             inputMethodHints: Qt.ImhNoPredictiveText
-            placeholderText: "Search..."
+            placeholderText: qsTr("Search...")
             onTextChanged: {
                 searchModel.searchString = text
                 //                Travels.findStations(text, true, searchModel)

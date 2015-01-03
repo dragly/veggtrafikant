@@ -37,7 +37,7 @@ Item {
             fill: parent
         }
 
-        text: "Updating news..."
+        text: qsTr("Updating news...")
         color: theme.travelText
         font.pixelSize: root.height * 0.038
         wrapMode: Text.WordWrap

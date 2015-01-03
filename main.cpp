@@ -11,6 +11,9 @@
 #include <QGraphicsObject>
 #include <QGLWidget>
 #include <QFontDatabase>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QString>
 //#include "qtquick2applicationviewer.h"
 #include <QtQml/QQmlApplicationEngine>
 //#include "qmlapplicationviewer.h"
@@ -27,6 +30,21 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     qmlRegisterType<Settings>("org.dragly.sanntid", 1, 0, "SettingsStorage");
 
     QGuiApplication app(argc, argv);
+
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+            QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+
+    QTranslator myappTranslator;
+    qDebug() << ":/sanntid_" + QLocale::system().name();
+    if(!myappTranslator.load(":/sanntid_" + QLocale::system().name())) {
+        qDebug() << "Failed to load translation file!";
+    }
+    app.installTranslator(&myappTranslator);
+
+    qDebug() << "Current locale: " << QLocale::system();
+
     QQmlApplicationEngine engine(QUrl("qrc:/qml/sanntid/main.qml"));
 
     QFontDatabase database;

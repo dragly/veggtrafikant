@@ -126,7 +126,7 @@ Item {
             width: parent.width
             Layout.fillWidth: true
             font.pixelSize: weatherSettingsRoot.width * 0.04
-            placeholderText: "Search..."
+            placeholderText: qsTr("Search...")
 
             onTextChanged: {
                 filterPlaces(locationTextEdit.text)

@@ -51,7 +51,7 @@ Item {
             }
         }
         Text {
-            text: "Minimum time:"
+            text: qsTr("Minimum time:")
             font.pixelSize: parent.width * 0.05
             color: theme.strongFront
         }

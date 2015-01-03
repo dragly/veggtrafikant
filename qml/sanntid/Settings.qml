@@ -32,11 +32,11 @@ Item {
     ListModel {
         id: topLevelModel
         ListElement {
-            name: "Travel"
+            name: qsTr("Stops")
             contents: "settings/TravelSettings.qml"
         }
         ListElement {
-            name: "Weather"
+            name: qsTr("Weather")
             contents: "settings/WeatherSettings.qml"
         }
 //        ListElement {
@@ -44,11 +44,11 @@ Item {
 //            contents: "settings/FeedSettings.qml"
 //        }
         ListElement {
-            name: "About"
+            name: qsTr("About")
             contents: "settings/About.qml"
         }
         ListElement {
-            name: "Exit"
+            name: qsTr("Exit")
             contents: "settings/ExitSettings.qml"
         }
     }
@@ -78,7 +78,7 @@ Item {
                 leftMargin: parent.width * 0.2
             }
 
-            text: "Settings"
+            text: qsTr("Settings")
             color: theme.middle
             font.pixelSize: parent.width * 0.1
             font.weight: Font.Light

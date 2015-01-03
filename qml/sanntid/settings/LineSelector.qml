@@ -34,11 +34,11 @@ Item {
                 font.pixelSize: lineSelectorRoot.width * 0.05
                 color: theme.duseFront
                 font.weight: Font.Light
-                text: "Choose lines"
+                text: qsTr("Choose lines")
             }
 
             SettingsButton {
-                text: "Save"
+                text: qsTr("Save")
                 onClicked: {
                     if(allSwitch.checked) {
                         lineSelectorRoot.station.directions = "all"

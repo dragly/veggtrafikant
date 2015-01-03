@@ -140,7 +140,7 @@ Item {
 
             SettingsButton {
                 id: addButton
-                text: "Add"
+                text: qsTr("Add")
 
                 function startSearch() {
                     searchOverlay.visible = true

@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/sanntid/constants.js</file>
-        <file>qml/sanntid/CpuStats.qml</file>
         <file>qml/sanntid/helpers.js</file>
         <file>qml/sanntid/ListDelegate.qml</file>
         <file>qml/sanntid/main.qml</file>

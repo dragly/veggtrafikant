@@ -12,7 +12,8 @@ SOURCES += main.cpp \
 
 RESOURCES += \
     resources.qrc \
-    qml.qrc
+    qml.qrc \
+    translations.qrc
 
 TARGET = rutetid
 
@@ -30,8 +31,12 @@ android {
     TARGET = sanntid
 }
 
+TRANSLATIONS = sanntid_nb_NO.ts
+
 ## Please do not modify the following two lines. Required for deployment.
 #include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 #qtcAddDeployment()
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+include(translations.pri)

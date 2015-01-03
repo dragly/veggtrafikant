@@ -13,13 +13,13 @@ Item {
         }
         id: exitModel
         SettingsButton {
-            text: "Return to main view"
+            text: qsTr("Return to main view")
             onClicked: {
                 returnToMainView()
             }
         }
         SettingsButton {
-            text: "Exit Sanntid"
+            text: qsTr("Exit Sanntid")
             onClicked: {
                 Qt.quit()
             }
