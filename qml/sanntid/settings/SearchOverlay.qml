@@ -26,7 +26,7 @@ Item {
         id: searchModel
         property string searchString: ""
         source: searchString.length > 0 ? "http://reisapi.ruter.no/Place/GetPlaces/" +  searchString + "?json=true" : ""
-        query: "$[?(@.RealTimeStop===true)]"
+        query: "$[?(@.PlaceType===\"Stop\")]"
     }
 
     //    Flickable {
